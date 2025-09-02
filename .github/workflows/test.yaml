@@ -1,0 +1,32 @@
+name: Testing
+
+# gha branch is for spamming Github Actions
+on:
+    push:
+        branches: ['main', 'gha']
+    pull_request:
+        branches: ['main']
+    workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+            version: '0.8.2'
+            enable-cache: true
+
+      - name: Install python dependencies
+        run: |
+          uv sync --locked
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
+      - name: Run tests
+        working-directory: door_tracker
+        run: |
+          ./manage.py test --noinput
