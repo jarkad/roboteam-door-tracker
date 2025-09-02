@@ -1,0 +1,37 @@
+@startuml
+
+map log {
+	type => "in" or "out"
+	tag_id => foreign_key
+	time => datetime
+}
+
+map tag_person {
+	tag_id => foreign_key
+	person_id => foreign_key
+}
+
+map person {
+	id => ID
+	name => text
+	subteam_id => foreign_key
+}
+
+map membership {
+	person_id => foreign_key
+	subteam_id => foreign_key
+}
+
+map subteam {
+	id => ID
+	name => text
+}
+
+log::tag_id           -> tag_person::tag_id
+tag_person::person_id -> person::id
+
+person::id -> membership::person_id
+
+membership::subteam_id -> subteam::id
+
+@enduml
