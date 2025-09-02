@@ -10,6 +10,10 @@
     uv.sync.enable = true;
   };
 
+  enterShell = ''
+    export PATH="$DEVENV_ROOT/.venv/bin''${PATH+:}$PATH"
+  '';
+
   ## Tests
 
   tasks."django:test" = {
