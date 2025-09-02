@@ -1,7 +1,13 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
-  packages = [ pkgs.uv ];
 
-  env.PATH = "$DEVENV_ROOT/.venv/bin:$PATH";
+  ## Languages
+
+  languages.python = {
+    enable = true;
+    uv.enable = true;
+    uv.sync.enable = true;
+  };
+
 }
