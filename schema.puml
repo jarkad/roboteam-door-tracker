@@ -27,11 +27,11 @@ map subteam {
 	name => text
 }
 
-log::tag_id           -> tag_person::tag_id
-tag_person::person_id -> person::id
+log::tag_id           }-|| tag_person::tag_id
+tag_person::person_id }-|| person::id
 
-person::id -> membership::person_id
+person::id ||-{ membership::person_id
 
-membership::subteam_id -> subteam::id
+membership::subteam_id }-|| subteam::id
 
 @enduml
