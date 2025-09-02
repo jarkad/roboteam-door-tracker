@@ -2,6 +2,25 @@
 
 {
 
+  ## Scripts
+
+  scripts.django.exec = ''
+    cd $DEVENV_ROOT/door_tracker
+    ./manage.py "$@"
+  '';
+
+  scripts.dev.exec = ''
+    django runserver
+  '';
+
+  scripts.makemigrations.exec = ''
+    django makemigrations
+  '';
+
+  scripts.migrate.exec = ''
+    django migrate
+  '';
+
   ## Languages
 
   languages.python = {
