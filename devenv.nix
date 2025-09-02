@@ -10,4 +10,13 @@
     uv.sync.enable = true;
   };
 
+  ## Tests
+
+  tasks."django:test" = {
+    exec = ''
+      uv run door_tracker/manage.py test
+    '';
+    before = [ "devenv:enterTest" ];
+  };
+
 }
