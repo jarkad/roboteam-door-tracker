@@ -10,6 +10,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "python-lsp-server>=1.13.1",
     "ruff>=0.12.11",
 ]
 
