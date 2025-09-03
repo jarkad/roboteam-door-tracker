@@ -5,24 +5,38 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='SubTeam',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.TextField()),
             ],
         ),
         migrations.CreateModel(
             name='Person',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.TextField()),
                 ('subteam_id', models.ManyToManyField(to='webui.subteam')),
             ],
@@ -30,24 +44,64 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TagPerson',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('person_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='webui.person')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
+                (
+                    'person_id',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to='webui.person'
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Log',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('type', models.TextField()),
                 ('time', models.DateTimeField(auto_now_add=True)),
-                ('tag_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='webui.tagperson')),
+                (
+                    'tag_id',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='webui.tagperson',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Membership',
             fields=[
-                ('person_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='webui.person')),
-                ('subteam_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='webui.subteam')),
+                (
+                    'person_id',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        primary_key=True,
+                        serialize=False,
+                        to='webui.person',
+                    ),
+                ),
+                (
+                    'subteam_id',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to='webui.subteam'
+                    ),
+                ),
             ],
         ),
     ]
