@@ -7,7 +7,7 @@ map log {
 }
 
 map tag_person {
-	tag_id => foreign_key
+	tag_id => ID
 	person_id => foreign_key
 }
 
