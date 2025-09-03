@@ -14,10 +14,6 @@ map tag_person {
 map person {
 	id => ID
 	name => text
-}
-
-map membership {
-	person_id => foreign_key
 	subteam_id => foreign_key
 }
 
@@ -29,8 +25,6 @@ map subteam {
 log::tag_id           }-|| tag_person::tag_id
 tag_person::person_id }-|| person::id
 
-person::id ||-{ membership::person_id
-
-membership::subteam_id }-|| subteam::id
+person::subteam_id }-{ subteam::id
 
 @enduml
