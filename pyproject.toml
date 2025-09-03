@@ -7,3 +7,12 @@ requires-python = ">=3.13"
 dependencies = [
     "django>=5.2.5",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.12.11",
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+quote-style = 'single'
