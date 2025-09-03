@@ -14,7 +14,6 @@ map tag_person {
 map person {
 	id => ID
 	name => text
-	subteam_id => foreign_key
 }
 
 map membership {
