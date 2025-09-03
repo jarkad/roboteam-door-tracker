@@ -30,7 +30,7 @@
   };
 
   enterShell = ''
-    export PATH="$DEVENV_ROOT/.venv/bin''${PATH+:}$PATH"
+    export PATH="$UV_PROJECT_ENVIRONMENT/bin''${PATH+:}$PATH"
   '';
 
   ## Tests
