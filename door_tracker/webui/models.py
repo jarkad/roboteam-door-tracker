@@ -8,7 +8,7 @@ class SubTeam(models.Model):
 
 class Person(models.Model):
     name = models.TextField()
-    subteam_id = models.ManyToManyRel(SubTeam)
+    subteam_id = models.ManyToManyField(SubTeam)
 
     def __str__(self):
         return self.name
