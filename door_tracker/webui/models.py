@@ -8,13 +8,10 @@ class SubTeam(models.Model):
 
 class Person(models.Model):
     name = models.TextField()
+    subteam_id = models.ManyToManyRel(SubTeam)
 
     def __str__(self):
         return self.name
-
-class Membership(models.Model):
-    person_id = models.ForeignKey(Person, primary_key=True, on_delete=models.CASCADE)
-    subteam_id = models.ForeignKey(SubTeam, on_delete=models.CASCADE)
 
 class TagPerson(models.Model):
     person_id = models.ForeignKey(Person, on_delete=models.CASCADE)
