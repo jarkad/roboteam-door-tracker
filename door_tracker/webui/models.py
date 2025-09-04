@@ -1,4 +1,3 @@
-from base64 import b64encode
 from django.db import models
 from django.utils import timezone
 
@@ -14,7 +13,10 @@ class Log(models.Model):
     time = models.DateTimeField(auto_now_add=True)
 
     def person(self):
-        return f'{self.tag.owner} ({self.tag.name})'
+        if self.tag.is_claimed():
+            return f'{self.tag.owner.name} ({self.tag.name})'
+        else:
+            return '-'
 
     def __str__(self):
         return ' — '.join([str(self.time), self.type, self.person()])
@@ -37,14 +39,24 @@ class Membership(models.Model):
 
 class Tag(models.Model):
     tag = models.BinaryField()
-    name = models.CharField()
-    owner = models.ForeignKey('Person', on_delete=models.CASCADE, related_name='tags')
+    name = models.CharField(blank=True)
+    owner = models.ForeignKey(
+        'Person', blank=True, null=True, on_delete=models.CASCADE, related_name='tags'
+    )
+
+    def is_claimed(self):
+        return self.owner is not None
 
     def binary_id(self):
-        return b64encode(self.tag).decode()
+        return self.tag.hex().upper()
 
     def __str__(self):
-        return f'{self.name} ({self.owner})'
+        n = self.name
+        if not n:
+            n = 'unnamed'
+        if self.owner:
+            n += f' ({self.owner})'
+        return n
 
 
 class Person(models.Model):

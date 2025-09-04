@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ("webui", "0004_job_remove_log_tag_id_remove_person_subteam_id_and_more"),
+        ('webui', '0004_job_remove_log_tag_id_remove_person_subteam_id_and_more'),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="person",
-            options={"verbose_name": "Person", "verbose_name_plural": "People"},
+            name='person',
+            options={'verbose_name': 'Person', 'verbose_name_plural': 'People'},
         ),
         migrations.AlterModelOptions(
-            name="subteam",
-            options={"verbose_name": "Subteam"},
+            name='subteam',
+            options={'verbose_name': 'Subteam'},
         ),
     ]
