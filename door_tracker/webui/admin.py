@@ -29,3 +29,14 @@ class NamedAdmin(admin.ModelAdmin):
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
     list_display = ('name', 'quota')
+
+
+# this ungodly hack disables alphabetical sorting of models
+# https://forum.djangoproject.com/t/reordering-list-of-models-in-django-admin/5300/9
+
+
+def get_app_list(self, request, app_label=None):
+    return self._build_app_dict(request, app_label).values()
+
+
+admin.AdminSite.get_app_list = get_app_list
