@@ -22,6 +22,11 @@
     django migrate "$@"
   '';
 
+  scripts.init.exec = ''
+    django migrate &&
+    django createsuperuser "$@"
+  '';
+
   ## Languages
 
   languages.python = {
