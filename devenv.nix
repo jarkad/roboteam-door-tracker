@@ -10,6 +10,7 @@
   '';
 
   scripts.dev.exec = ''
+    django migrate &&
     django runserver
   '';
 
