@@ -76,6 +76,14 @@ in
 
   ## Packages
 
+  outputs.admin = pkgs.writeShellApplication {
+    name = "admin";
+    runtimeInputs = [ venv ];
+    text = ''
+      DJANGO_SETTINGS_MODULE=door_tracker.settings django-admin "$@"
+    '';
+  };
+
   outputs.static = pkgs.stdenv.mkDerivation {
     name = "static";
     src = ./door_tracker;
@@ -83,20 +91,22 @@ in
     dontConfigure = true;
     dontBuild = true;
 
-    nativeBuildInputs = [ venv ];
+    nativeBuildInputs = [ config.outputs.admin ];
 
     installPhase = ''
-      export STATIC_ROOT=$out
-      python manage.py collectstatic --no-input
+      DJANGO_STATIC_ROOT=$out admin collectstatic --no-input
     '';
   };
 
   outputs.serve = pkgs.writeShellApplication {
     name = "serve";
-    runtimeInputs = [ venv ];
+    runtimeInputs = [
+      config.outputs.admin
+      venv
+    ];
     runtimeEnv.DJANGO_STATIC_ROOT = config.outputs.static;
     text = ''
-      DJANGO_SETTINGS_MODULE=door_tracker.settings django-admin migrate
+      admin migrate
       daphne -b 0.0.0.0 door_tracker.asgi:application
     '';
   };
@@ -106,7 +116,7 @@ in
   containers.serve = {
     name = "rfid-tracker-serve";
     startupCommand = lib.getExe config.outputs.serve;
-    copyToRoot = [ ];
+    copyToRoot = [ config.outputs.admin ];
     maxLayers = 42;
   };
 
