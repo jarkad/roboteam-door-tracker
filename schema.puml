@@ -6,15 +6,22 @@ map log {
 	time => datetime
 }
 
-map tag_person {
-	tag_id => ID
+map tag {
+	id => ID
 	person_id => foreign_key
+	name => text
 }
 
 map person {
 	id => ID
 	name => text
+}
+
+map membership {
+	person_id => foreign_key
 	subteam_id => foreign_key
+	job_id => foreign_key
+	starting_from => datetime
 }
 
 map subteam {
@@ -22,9 +29,17 @@ map subteam {
 	name => text
 }
 
-log::tag_id           }-|| tag_person::tag_id
-tag_person::person_id }-|| person::id
+map job {
+	id => ID
+	name => text
+	quota_hours_per_week => int
+}
 
-person::subteam_id }-{ subteam::id
+log::tag_id		}-||	tag::id
+tag::person_id		}-||	person::id
+
+membership::person_id	}-u-||	person::id
+membership::subteam_id	}-l-||	subteam::id
+membership::job_id	}-||	job::id
 
 @enduml
