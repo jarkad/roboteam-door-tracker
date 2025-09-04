@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }@args:
+
+let
+  venv = import ./python.nix args;
+in
 
 {
 
@@ -49,6 +53,33 @@
   tasks."django:test" = {
     exec = "django test";
     before = [ "devenv:enterTest" ];
+  };
+
+  ## Packages
+
+  outputs.static = pkgs.stdenv.mkDerivation {
+    name = "static";
+    src = ./door_tracker;
+
+    dontConfigure = true;
+    dontBuild = true;
+
+    nativeBuildInputs = [ venv ];
+
+    installPhase = ''
+      export STATIC_ROOT=$out
+      python manage.py collectstatic --no-input
+    '';
+  };
+
+  outputs.serve = pkgs.writeShellApplication {
+    name = "serve";
+    runtimeInputs = [ venv ];
+    runtimeEnv.DJANGO_STATIC_ROOT = config.outputs.static;
+    text = ''
+      DJANGO_SETTINGS_MODULE=door_tracker.settings django-admin migrate
+      daphne -b 0.0.0.0 door_tracker.asgi:application
+    '';
   };
 
   ## Config files
