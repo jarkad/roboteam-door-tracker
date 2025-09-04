@@ -97,12 +97,24 @@ in
     '';
   };
 
+  outputs.init = pkgs.writeShellApplication {
+    name = "init";
+    runtimeInputs = [ config.outputs.admin ];
+    text = ''
+      admin migrate
+      admin createsuperuser
+    '';
+  };
+
   ## Containers
 
   containers.serve = {
     name = "rfid-tracker-serve";
     startupCommand = lib.getExe config.outputs.serve;
-    copyToRoot = [ config.outputs.admin ];
+    copyToRoot = [
+      config.outputs.admin
+      config.outputs.init
+    ];
     maxLayers = 42;
   };
 
