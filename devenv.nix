@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
 
@@ -33,6 +33,22 @@
   enterShell = ''
     export PATH="$UV_PROJECT_ENVIRONMENT/bin''${PATH+:}$PATH"
   '';
+
+  ## Devcontainer
+
+  devcontainer.enable = true;
+
+  devcontainer.settings.customizations.vscode.extensions = [
+    "jnoortheen.nix-ide"
+    "mkhl.direnv"
+    "ms-python.python"
+  ];
+
+  packages = [
+    pkgs.git
+    pkgs.nixfmt
+    pkgs.treefmt
+  ];
 
   ## Tests
 
