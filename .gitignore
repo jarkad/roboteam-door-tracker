@@ -18,3 +18,4 @@ door_tracker/db.sqlite3
 /ruff.toml
 /schema.png
 /schema.svg
+/treefmt.toml

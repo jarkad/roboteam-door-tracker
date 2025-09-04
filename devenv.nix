@@ -68,4 +68,16 @@
     };
   };
 
+  files."treefmt.toml".toml = {
+    formatter.nixfmt = {
+      command = "nixfmt";
+      includes = [ "*.nix" ];
+    };
+    formatter.ruff = {
+      command = "ruff";
+      options = [ "format" ];
+      includes = [ "*.py" ];
+    };
+  };
+
 }
