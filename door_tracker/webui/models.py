@@ -13,14 +13,11 @@ class Log(models.Model):
     tag = models.ForeignKey('Tag', on_delete=models.CASCADE, related_name='logs')
     time = models.DateTimeField(auto_now_add=True)
 
-    def timestamp(self):
-        return self.time.strftime('%c')
-
     def person(self):
         return f'{self.tag.owner} ({self.tag.name})'
 
     def __str__(self):
-        return ' — '.join([self.timestamp(), self.type, self.person()])
+        return ' — '.join([str(self.time), self.type, self.person()])
 
 
 class Membership(models.Model):
@@ -56,12 +53,19 @@ class Person(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Person'
+        verbose_name_plural = 'People'
+
 
 class SubTeam(models.Model):
     name = models.CharField()
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Subteam'
 
 
 class Job(models.Model):

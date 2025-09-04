@@ -6,12 +6,14 @@ from .models import Log, Membership, Tag, Person, SubTeam, Job
 
 @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
-    list_display = ('timestamp', 'type', 'person')
+    list_display = ('time', 'type', 'person')
+    ordering = ('time',)
 
 
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
     list_display = ('starting_from', 'person', 'subteam', 'job')
+    ordering = ('starting_from',)
 
 
 @admin.register(Tag)
