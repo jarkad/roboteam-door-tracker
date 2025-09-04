@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+  "daphne>=4.2.1",
   "django>=5.2.5",
   "dj-database-url>=3.0.1",
   "whitenoise[brotli]>=6.9.0",
