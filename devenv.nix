@@ -11,15 +11,15 @@
 
   scripts.dev.exec = ''
     django migrate &&
-    django runserver
+    django runserver "$@"
   '';
 
   scripts.makemigrations.exec = ''
-    django makemigrations
+    django makemigrations "$@"
   '';
 
   scripts.migrate.exec = ''
-    django migrate
+    django migrate "$@"
   '';
 
   ## Languages
