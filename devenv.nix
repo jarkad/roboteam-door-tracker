@@ -1,4 +1,9 @@
-{ config, pkgs, ... }@args:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}@args:
 
 let
   venv = import ./python.nix args;
@@ -80,6 +85,15 @@ in
       DJANGO_SETTINGS_MODULE=door_tracker.settings django-admin migrate
       daphne -b 0.0.0.0 door_tracker.asgi:application
     '';
+  };
+
+  ## Containers
+
+  containers.serve = {
+    name = "rfid-tracker-serve";
+    startupCommand = lib.getExe config.outputs.serve;
+    copyToRoot = [ ];
+    maxLayers = 42;
   };
 
   ## Config files
