@@ -53,9 +53,7 @@
   ## Tests
 
   tasks."django:test" = {
-    exec = ''
-      uv run door_tracker/manage.py test
-    '';
+    exec = "django test";
     before = [ "devenv:enterTest" ];
   };
 
