@@ -14,6 +14,6 @@ dev = [
     "ruff>=0.12.11",
 ]
 
-[tool.ruff.format]
-docstring-code-format = true
-quote-style = 'single'
+[tool.setuptools.packages.find]
+include = ['*']
+

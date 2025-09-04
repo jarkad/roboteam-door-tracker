@@ -27,6 +27,7 @@
     enable = true;
     uv.enable = true;
     uv.sync.enable = true;
+    directory = "door_tracker";
   };
 
   enterShell = ''
@@ -40,6 +41,15 @@
       uv run door_tracker/manage.py test
     '';
     before = [ "devenv:enterTest" ];
+  };
+
+  ## Config files
+
+  files."ruff.toml".toml = {
+    format = {
+      docstring-code-format = true;
+      quote-style = "single";
+    };
   };
 
 }
