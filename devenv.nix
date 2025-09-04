@@ -111,6 +111,15 @@ in
     '';
   };
 
+  outputs.init = pkgs.writeShellApplication {
+    name = "init";
+    runtimeInputs = [ config.outputs.admin ];
+    text = ''
+      admin migrate
+      admin createsuperuser
+    '';
+  };
+
   ## Containers
 
   containers.serve = {
