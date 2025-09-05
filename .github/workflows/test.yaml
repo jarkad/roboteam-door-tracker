@@ -23,6 +23,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
+          cd door_tracker
           uv sync --locked
           echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
