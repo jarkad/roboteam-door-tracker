@@ -53,6 +53,8 @@
   packages = [
     pkgs.git
     pkgs.nixfmt
+    pkgs.shfmt
+    pkgs.taplo
     pkgs.treefmt
   ];
 
@@ -81,6 +83,18 @@
       command = "ruff";
       options = [ "format" ];
       includes = [ "*.py" ];
+    };
+    formatter.shfmt = {
+      command = "shfmt";
+      includes = [
+        ".envrc"
+        "*.sh"
+      ];
+    };
+    formatter.taplo = {
+      command = "taplo";
+      options = [ "format" ];
+      includes = [ "*.toml" ];
     };
   };
 
