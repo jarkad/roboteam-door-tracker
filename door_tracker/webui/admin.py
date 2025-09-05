@@ -35,7 +35,7 @@ class JobAdmin(admin.ModelAdmin):
 
 
 def get_app_list(self, request, app_label=None):
-    return self._build_app_dict(request, app_label).values()
+    return list(self._build_app_dict(request, app_label).values())
 
 
 admin.AdminSite.get_app_list = get_app_list
