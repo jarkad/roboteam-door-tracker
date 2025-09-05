@@ -1,0 +1,13 @@
+{% if latest_logs_list %}
+    <ul>
+    {% for log in latest_logs_list %}
+        <li>
+            <a href="{% url 'name' log.tag.owner %}">
+                Time for {{ log.person }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No logs are available.</p>
+{% endif %}
