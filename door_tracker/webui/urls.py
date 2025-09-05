@@ -6,4 +6,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('person/<str:name>', views.getPerson, name='name'),
     path('latestLogs', views.logs, name='logs'),
+    path("checkAuth", views.checkAuth)
 ]

@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.template import loader
-
+from django.contrib.auth.models import Permission, User
 # Create your views here.
 
 from .models import Log
@@ -24,3 +24,7 @@ def logs(request):
     template = loader.get_template('webui/logs.html')
     context = {'latest_logs_list': latest_logs_list}
     return HttpResponse(template.render(context, request))
+
+async def checkAuth(request):
+    user = await request.auser()
+    return HttpResponse(user.username)
