@@ -98,4 +98,26 @@
     };
   };
 
+  ## Git hooks
+
+  git-hooks.hooks = {
+    check-json.enable = true;
+    check-merge-conflicts.enable = true;
+    check-python.enable = true;
+    check-symlinks.enable = true;
+    check-toml.enable = true;
+    check-yaml.enable = true;
+    deadnix.enable = true;
+    detect-private-keys.enable = true;
+    editorconfig-checker.enable = true;
+    end-of-file-fixer.enable = true;
+    fix-byte-order-marker.enable = true;
+    lychee.enable = true;
+    ripsecrets.enable = true;
+    ruff.enable = true;
+    shellcheck.enable = true;
+    treefmt.enable = true;
+    uv-check.enable = true;
+  };
+
 }
