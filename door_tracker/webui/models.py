@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
@@ -14,7 +15,7 @@ class Log(models.Model):
 
     def person(self):
         if self.tag.is_claimed():
-            return f'{self.tag.owner.name} ({self.tag.name})'
+            return f'{self.tag.owner.get_full_name()} ({self.tag.name})'
         else:
             return '-'
 
@@ -24,7 +25,7 @@ class Log(models.Model):
 
 class Membership(models.Model):
     person = models.ForeignKey(
-        'Person', on_delete=models.CASCADE, related_name='memberships'
+        User, on_delete=models.CASCADE, related_name='memberships'
     )
     subteam = models.ForeignKey(
         'SubTeam',
@@ -41,8 +42,11 @@ class Tag(models.Model):
     tag = models.BinaryField()
     name = models.CharField(blank=True)
     owner = models.ForeignKey(
-        'Person', blank=True, null=True, on_delete=models.CASCADE, related_name='tags'
+        User, blank=True, null=True, on_delete=models.CASCADE, related_name='tags'
     )
+
+    def owner_name(self):
+        return self.owner.get_full_name()
 
     def is_claimed(self):
         return self.owner is not None
@@ -55,19 +59,8 @@ class Tag(models.Model):
         if not n:
             n = 'unnamed'
         if self.owner:
-            n += f' ({self.owner})'
+            n += f' ({self.owner_name()})'
         return n
-
-
-class Person(models.Model):
-    name = models.CharField()
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Person'
-        verbose_name_plural = 'People'
 
 
 class SubTeam(models.Model):

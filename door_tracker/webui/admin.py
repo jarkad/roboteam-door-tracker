@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Log, Membership, Tag, Person, SubTeam, Job
+from .models import Log, Membership, Tag, SubTeam, Job
 
 
 @admin.register(Log)
@@ -17,10 +17,10 @@ class MembershipAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'owner', 'binary_id')
+    list_display = ('name', 'owner_name', 'binary_id')
 
 
-@admin.register(Person, SubTeam)
+@admin.register(SubTeam)
 class NamedAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
