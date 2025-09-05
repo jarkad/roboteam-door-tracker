@@ -67,6 +67,10 @@
 
   ## Config files
 
+  files."lychee.toml".toml = {
+    exclude_path = [ "door_tracker/webui/templates/" ];
+  };
+
   files."ruff.toml".toml = {
     format = {
       docstring-code-format = true;
