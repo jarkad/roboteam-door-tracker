@@ -10,7 +10,9 @@ class Log(models.Model):
         UNKNOWN = 'WTF', 'Card not linked'
 
     type = models.CharField(max_length=3, choices=LogEntryType.choices)
-    tag = models.ForeignKey('Tag', on_delete=models.CASCADE, related_name='logs')
+    tag = models.ForeignKey(
+        'Tag', blank=True, null=True, on_delete=models.CASCADE, related_name='logs'
+    )
     time = models.DateTimeField(auto_now_add=True)
 
     def person(self):
