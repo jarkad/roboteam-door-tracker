@@ -51,7 +51,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # must be at the top, but under SecurityMiddleware
+    # must be at the top, but under SecurityMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -99,19 +100,14 @@ if dj_database_url.DEFAULT_ENV in os.environ:
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
+# pylsp complains about long lines otherwise
+pv = 'django.contrib.auth.password_validation'
+
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': f'{pv}.UserAttributeSimilarityValidator'},
+    {'NAME': f'{pv}.MinimumLengthValidator'},
+    {'NAME': f'{pv}.CommonPasswordValidator'},
+    {'NAME': f'{pv}.NumericPasswordValidator'},
 ]
 
 

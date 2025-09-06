@@ -11,7 +11,11 @@ class Log(models.Model):
 
     type = models.CharField(max_length=3, choices=LogEntryType.choices)
     tag = models.ForeignKey(
-        'Tag', blank=True, null=True, on_delete=models.CASCADE, related_name='logs'
+        'Tag',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='logs',
     )
     time = models.DateTimeField(auto_now_add=True)
 
@@ -36,7 +40,12 @@ class Membership(models.Model):
         on_delete=models.CASCADE,
         related_name='members',
     )
-    job = models.ForeignKey('Job', blank=True, null=True, on_delete=models.CASCADE)
+    job = models.ForeignKey(
+        'Job',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
     starting_from = models.DateTimeField(default=timezone.now)
 
 
@@ -44,7 +53,11 @@ class Tag(models.Model):
     tag = models.BinaryField()
     name = models.CharField(blank=True)
     owner = models.ForeignKey(
-        User, blank=True, null=True, on_delete=models.CASCADE, related_name='tags'
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='tags',
     )
 
     def owner_name(self):
