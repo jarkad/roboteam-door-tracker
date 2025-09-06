@@ -1,274 +1,281 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checked-In Dashboard</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f3f3f3;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checked-In Dashboard</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f3f3f3;
+      }
 
-    /* Top Header */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #4B0082;
-      color: white;
-      padding: 10px 20px;
-    }
+      /* Top Header */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #4b0082;
+        color: white;
+        padding: 10px 20px;
+      }
 
-    .header .logo {
-      font-weight: bold;
-      font-size: 18px;
-    }
+      .header .logo {
+        font-weight: bold;
+        font-size: 18px;
+      }
 
-    .header .user {
-      font-size: 14px;
-    }
+      .header .user {
+        font-size: 14px;
+      }
 
-    .header .user a {
-      color: white;
-      text-decoration: none;
-      margin-left: 8px;
-    }
+      .header .user a {
+        color: white;
+        text-decoration: none;
+        margin-left: 8px;
+      }
 
-    /* Toolbar */
-    .toolbar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      background: #fff;
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
+      /* Toolbar */
+      .toolbar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
 
-    .toolbar input,
-    .toolbar button {
-      padding: 6px 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
+      .toolbar input,
+      .toolbar button {
+        padding: 6px 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
 
-    .toolbar button {
-      background: #4B0082;
-      color: white;
-      cursor: pointer;
-      border: none;
-    }
+      .toolbar button {
+        background: #4b0082;
+        color: white;
+        cursor: pointer;
+        border: none;
+      }
 
-    .toolbar button:hover {
-      background: #360060;
-    }
+      .toolbar button:hover {
+        background: #360060;
+      }
 
-    /* Database Viewer */
-    .data-viewer {
-      background: white;
-      margin: 20px auto;
-      width: 80%;
-      max-width: 900px;
-      min-height: 400px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 20px;
-      overflow-y: auto;
-    }
+      /* Database Viewer */
+      .data-viewer {
+        background: white;
+        margin: 20px auto;
+        width: 80%;
+        max-width: 900px;
+        min-height: 400px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        overflow-y: auto;
+      }
 
-    .data-viewer h3 {
-      margin-top: 0;
-      color: #333;
-    }
+      .data-viewer h3 {
+        margin-top: 0;
+        color: #333;
+      }
 
-    .data-viewer ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+      .data-viewer ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
 
-    .data-viewer li {
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+      .data-viewer li {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
 
-    .data-viewer li:hover {
-      background: #f9f9f9;
-    }
+      .data-viewer li:hover {
+        background: #f9f9f9;
+      }
 
-    /* Hidden details */
-    .details {
-      display: none;
-      padding: 10px;
-      margin-top: 5px;
-      background: #f3f3f3;
-      border-radius: 5px;
-      font-size: 14px;
-      color: #333;
-    }
+      /* Hidden details */
+      .details {
+        display: none;
+        padding: 10px;
+        margin-top: 5px;
+        background: #f3f3f3;
+        border-radius: 5px;
+        font-size: 14px;
+        color: #333;
+      }
 
-    .data-viewer li.active .details {
-      display: block;
-    }
-  </style>
-</head>
-<body>
-  <!-- Header -->
-  <div class="header">
-    <div class="logo">🤖 RoboTeam Twente</div>
-    <div class="user">
-      <span id="usernameDisplay">Welcome, User</span>
-      <a href="#" id="logoutLink">Log out</a>
+      .data-viewer li.active .details {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">🤖 RoboTeam Twente</div>
+      <div class="user">
+        <span id="usernameDisplay">Welcome, User</span>
+        <a href="#" id="logoutLink">Log out</a>
+      </div>
     </div>
-  </div>
 
-  <!-- Toolbar -->
-  <div class="toolbar">
-    <button id="remoteCheckout">Remote Checkout</button>
-    <button id="testChangeStatus">Test Change Status</button> <!-- New Button -->
-  </div>
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button id="remoteCheckout">Remote Checkout</button>
+      <button id="testChangeStatus">Test Change Status</button>
+      <!-- New Button -->
+    </div>
 
+    <!-- Welcome Message -->
+    <!-- Database Viewer -->
+    <div class="data-viewer">
+      <h3>Database Entries</h3>
+      <ul id="logList"></ul>
+      <!-- Empty <ul> to be populated dynamically -->
+    </div>
 
-  <!-- Welcome Message -->
-  <!-- Database Viewer -->
-  <div class="data-viewer">
-    <h3>Database Entries</h3>
-    <ul id="logList"></ul> <!-- Empty <ul> to be populated dynamically -->
-  </div>
+    <script>
+      function getUsername() {
+        return localStorage.getItem('username') || 'User'
+      }
 
+      document.getElementById('usernameDisplay').textContent =
+        `Welcome, ${getUsername()}`
 
-  <script>
-    function getUsername() {
-      return localStorage.getItem('username') || 'User';
-    }
-
-    document.getElementById('usernameDisplay').textContent = `Welcome, ${getUsername()}`;
-
-    document.getElementById('logoutLink').addEventListener('click', async (event) => {
-      event.preventDefault();
-      try {
-        const response = await fetch('/ui/logout', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
+      document
+        .getElementById('logoutLink')
+        .addEventListener('click', async (event) => {
+          event.preventDefault()
+          try {
+            const response = await fetch('/ui/logout', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+              },
+            })
+            if (response.ok) {
+              localStorage.removeItem('username')
+              window.location.href = '/ui/login'
+            } else {
+              console.error('Logout failed')
+            }
+          } catch (error) {
+            console.error('Error during logout:', error)
           }
-        });
-        if (response.ok) {
-          localStorage.removeItem('username');
-          window.location.href = '/ui/login';
-        } else {
-          console.error('Logout failed');
-        }
-      } catch (error) {
-        console.error('Error during logout:', error);
-      }
-    });
-
-    function getCSRFToken() {
-      const name = 'csrftoken';
-      const cookies = document.cookie.split(';');
-      for (let cookie of cookies) {
-        const [key, value] = cookie.trim().split('=');
-        if (key === name) {
-          return value;
-        }
-      }
-      return '';
-    }
-
-    // Attach event listener for the new button
-  document.getElementById('testChangeStatus').addEventListener('click', async () => {
-    try {
-      const response = await fetch('/ui/change_status', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCSRFToken()
-        },
-        body: JSON.stringify({
-          tag_id: 4
         })
-      });
 
-      const data = await response.json();
-      if (response.ok) {
-        alert(`✅ Success: ${data.message || 'Log entry created successfully.'}`);
-      } else {
-        alert(`❌ Error: ${data.message || 'Something went wrong.'}`);
+      function getCSRFToken() {
+        const name = 'csrftoken'
+        const cookies = document.cookie.split(';')
+        for (let cookie of cookies) {
+          const [key, value] = cookie.trim().split('=')
+          if (key === name) {
+            return value
+          }
+        }
+        return ''
       }
 
-      // Refresh logs after success
-      if (response.ok) {
-        fetchLogs();
-      }
-    } catch (error) {
-      console.error('Error creating log:', error);
-      alert('⚠️ Could not reach server. Check console for details.');
-    }
-  });
-  // Fetch and display logs
-    async function fetchLogs() {
-      try {
-        const response = await fetch('/ui/current_user_data', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRFToken()
+      // Attach event listener for the new button
+      document
+        .getElementById('testChangeStatus')
+        .addEventListener('click', async () => {
+          try {
+            const response = await fetch('/ui/change_status', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+              },
+              body: JSON.stringify({
+                tag_id: 4,
+              }),
+            })
+
+            const data = await response.json()
+            if (response.ok) {
+              alert(
+                `✅ Success: ${data.message || 'Log entry created successfully.'}`,
+              )
+            } else {
+              alert(`❌ Error: ${data.message || 'Something went wrong.'}`)
+            }
+
+            // Refresh logs after success
+            if (response.ok) {
+              fetchLogs()
+            }
+          } catch (error) {
+            console.error('Error creating log:', error)
+            alert('⚠️ Could not reach server. Check console for details.')
           }
-        });
+        })
+      // Fetch and display logs
+      async function fetchLogs() {
+        try {
+          const response = await fetch('/ui/current_user_data', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCSRFToken(),
+            },
+          })
 
-        const data = await response.json();
-        const logList = document.getElementById('logList');
+          const data = await response.json()
+          const logList = document.getElementById('logList')
 
-        if (response.ok && data.status === 'success') {
-          logList.innerHTML = ''; // Clear existing content
-          if (data.logs.length === 0) {
-            logList.innerHTML = '<li>No logs available</li>';
-            return;
-          }
+          if (response.ok && data.status === 'success') {
+            logList.innerHTML = '' // Clear existing content
+            if (data.logs.length === 0) {
+              logList.innerHTML = '<li>No logs available</li>'
+              return
+            }
 
-          data.logs.forEach(log => {
-            const li = document.createElement('li');
-            const date = new Date(log.time);
-            const dateString = date.toLocaleDateString('nl-NL', { 
-              day: '2-digit', 
-              month: '2-digit', 
-              year: 'numeric' 
-            }); // Formats as DD-MM-YYYY
-            const timeString = date.toLocaleTimeString('nl-NL', { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            }); // Formats as HH:MM
-            const action = log.type
-            li.innerHTML = `
+            data.logs.forEach((log) => {
+              const li = document.createElement('li')
+              const date = new Date(log.time)
+              const dateString = date.toLocaleDateString('nl-NL', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              }) // Formats as DD-MM-YYYY
+              const timeString = date.toLocaleTimeString('nl-NL', {
+                hour: '2-digit',
+                minute: '2-digit',
+              }) // Formats as HH:MM
+              const action = log.type
+              li.innerHTML = `
               ${log.tag} - ${action} at ${dateString} ${timeString}
               <div class="details">
                 TagID: ${log.tag}<br>
                 User ID: ${log.user_id}<br>
                 Status: ${log.type}
               </div>
-            `;
-            logList.appendChild(li);
-            li.addEventListener('click', () => {
-              li.classList.toggle('active');
-            });
-          });
-        } else {
-          showMessage(data.message || 'Failed to load logs.', 'error');
+            `
+              logList.appendChild(li)
+              li.addEventListener('click', () => {
+                li.classList.toggle('active')
+              })
+            })
+          } else {
+            showMessage(data.message || 'Failed to load logs.', 'error')
+          }
+        } catch (error) {
+          console.error('Error fetching logs:', error)
+          showMessage('Could not fetch data. Please try again.', 'error')
         }
-      } catch (error) {
-        console.error('Error fetching logs:', error);
-        showMessage('Could not fetch data. Please try again.', 'error');
       }
-    }
 
-    // Fetch logs on page load
-    document.addEventListener('DOMContentLoaded', fetchLogs);
-  </script>
-</body>
+      // Fetch logs on page load
+      document.addEventListener('DOMContentLoaded', fetchLogs)
+    </script>
+  </body>
 </html>
