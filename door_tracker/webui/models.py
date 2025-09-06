@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.aggregates import Max
+from django.db.models import OuterRef, Subquery
 from django.utils import timezone
 
 
@@ -39,6 +41,20 @@ class Membership(models.Model):
     )
     job = models.ForeignKey('Job', blank=True, null=True, on_delete=models.CASCADE)
     starting_from = models.DateTimeField(default=timezone.now)
+
+    class MembershipManager(models.Manager):
+        def filter_effective(self):
+            qs = self.all()
+            return qs.filter(
+                starting_from=Subquery(
+                    qs.filter(person=OuterRef('person'))
+                    .values('person')
+                    .annotate(starting_from=Max('starting_from'))
+                    .values('starting_from')
+                ),
+            )
+
+    objects = MembershipManager()
 
 
 class Tag(models.Model):
