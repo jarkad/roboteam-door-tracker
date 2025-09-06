@@ -6,45 +6,44 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ("webui", "0006_alter_tag_name_alter_tag_owner"),
+        ('webui', '0006_alter_tag_name_alter_tag_owner'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="tag",
-            name="owner",
+            model_name='tag',
+            name='owner',
             field=models.ForeignKey(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="tags",
+                related_name='tags',
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
         migrations.AlterField(
-            model_name="membership",
-            name="person",
+            model_name='membership',
+            name='person',
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="memberships",
+                related_name='memberships',
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
         migrations.AlterField(
-            model_name="log",
-            name="tag",
+            model_name='log',
+            name='tag',
             field=models.ForeignKey(
                 blank=True,
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                related_name="logs",
-                to="webui.tag",
+                related_name='logs',
+                to='webui.tag',
             ),
         ),
         migrations.DeleteModel(
-            name="Person",
+            name='Person',
         ),
     ]
