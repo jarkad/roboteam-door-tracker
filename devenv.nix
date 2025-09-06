@@ -67,9 +67,13 @@
   ## Config files
 
   files."ruff.toml".toml = {
+    line-length = 80;
     format = {
       docstring-code-format = true;
       quote-style = "single";
+    };
+    lint.pycodestyle = {
+      max-line-length = 100;
     };
   };
 
