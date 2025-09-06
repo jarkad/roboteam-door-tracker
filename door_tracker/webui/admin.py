@@ -1,12 +1,43 @@
+from django.contrib.auth.models import User
 from django.contrib import admin
 
 from .models import Log, Membership, Tag, SubTeam, Job
+
+
+class LogSubteamListFilter(admin.SimpleListFilter):
+    title = 'subteam'
+    parameter_name = 'subteam'
+
+    def lookups(self, request, model_admin):
+        return [(s.id, s) for s in SubTeam.objects.all()]
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        members = Membership.objects.filter_effective().filter(
+            subteam=self.value()
+        )
+        return queryset.filter(tag__owner__in=members.values('person'))
+
+
+class LogPersonListFilter(admin.SimpleListFilter):
+    title = 'person'
+    parameter_name = 'person'
+
+    def lookups(self, request, model_admin):
+        return [(u.id, u.get_full_name()) for u in User.objects.all()]
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+        return queryset.filter(tag__owner=self.value())
 
 
 @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
     list_display = ('time', 'type', 'person')
     ordering = ('time',)
+    list_filter = (LogSubteamListFilter, LogPersonListFilter)
 
 
 @admin.register(Membership)
