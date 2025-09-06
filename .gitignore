@@ -10,6 +10,7 @@ devenv.local.nix
 
 # python
 __pycache__
+*.egg-info/
 
 # django
 door_tracker/db.sqlite3
