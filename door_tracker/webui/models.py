@@ -16,10 +16,11 @@ class Log(models.Model):
     time = models.DateTimeField(auto_now_add=True)
 
     def person(self):
+        if not self.tag:
+            return 'WebUI'
         if self.tag.is_claimed():
             return f'{self.tag.owner.get_full_name()} ({self.tag.name})'
-        else:
-            return '-'
+        return '-'
 
     def __str__(self):
         return ' — '.join([str(self.time), self.type, self.person()])
