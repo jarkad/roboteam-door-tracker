@@ -1,0 +1,35 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "mkhl.direnv",
+        "jnoortheen.nix-ide",
+        "ms-python.python",
+        "tamasfe.even-better-toml",
+        "ms-python.isort",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "direnv.restart.automatic": true,
+        "editor.formatOnPaste": false,
+        "editor.formatOnSave": true,
+        "python.terminal.shellIntegration.enabled": true,
+        "redhat.telemetry.enabled": false
+      }
+    }
+  },
+  "overrideCommand": false,
+  "portsAttributes": {
+    "*": {
+      "onAutoForward": "ignore"
+    },
+    "8000": {
+      "label": "django",
+      "onAutoForward": "notify"
+    }
+  },
+  "remoteUser": "vscode"
+}
