@@ -36,14 +36,14 @@ class LogPersonListFilter(admin.SimpleListFilter):
 @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
     list_display = ('time', 'type', 'person')
-    ordering = ('time',)
+    ordering = ('-time',)
     list_filter = (LogSubteamListFilter, LogPersonListFilter)
 
 
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
     list_display = ('starting_from', 'person', 'subteam', 'job')
-    ordering = ('starting_from',)
+    ordering = ('-starting_from',)
 
 
 @admin.register(Tag)
