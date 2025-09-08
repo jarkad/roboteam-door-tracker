@@ -67,10 +67,6 @@
 
   ## Config files
 
-  files."lychee.toml".toml = {
-    exclude_path = [ "door_tracker/webui/templates/" ];
-  };
-
   files."ruff.toml".toml = {
     format = {
       docstring-code-format = true;
@@ -116,7 +112,6 @@
     editorconfig-checker.enable = true;
     end-of-file-fixer.enable = true;
     fix-byte-order-marker.enable = true;
-    lychee.enable = true;
     ripsecrets.enable = true;
     ruff.enable = true;
     shellcheck.enable = true;
