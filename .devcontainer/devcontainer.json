@@ -17,7 +17,8 @@
         "editor.formatOnPaste": false,
         "editor.formatOnSave": true,
         "python.terminal.shellIntegration.enabled": true,
-        "redhat.telemetry.enabled": false
+        "redhat.telemetry.enabled": false,
+        "remote.autoForwardPorts": false
       }
     }
   },
@@ -31,12 +32,8 @@
   "onCreateCommand": "nix registry pin nixpkgs https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz && nix profile install nixpkgs#devenv nixpkgs#direnv",
   "overrideCommand": false,
   "portsAttributes": {
-    "*": {
-      "onAutoForward": "ignore"
-    },
     "8000": {
-      "label": "django",
-      "onAutoForward": "notify"
+      "label": "django"
     }
   },
   "remoteUser": "vscode"
