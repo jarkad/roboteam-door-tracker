@@ -36,6 +36,10 @@ in
     django createsuperuser "$@"
   '';
 
+  scripts.docker-login.exec = ''
+    skopeo login docker.io
+  '';
+
   ## Languages
 
   languages.python = {
@@ -51,7 +55,10 @@ in
 
   ## Devcontainer
 
-  packages = [ pkgs.git ];
+  packages = [
+    pkgs.git
+    pkgs.skopeo
+  ];
 
   ## Tests
 
