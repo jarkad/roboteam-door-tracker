@@ -162,7 +162,7 @@ in
       ++ lib.mapAttrsToList (name: _: {
         label = "container: ${name}";
         type = "shell";
-        command = "devenv container copy ${lib.escapeShellArg name}";
+        command = "devenv container --registry docker://docker.io/roboteamtwente/ copy ${lib.escapeShellArg name}";
         group = "build";
       }) config.containers
       # outputs
