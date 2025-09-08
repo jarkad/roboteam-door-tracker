@@ -17,8 +17,6 @@ RUN <<EOT
 experimental-features = nix-command flakes
 trusted-users = root vscode
 EOF
-	nix registry pin nixpkgs https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz
-	nix profile install nixpkgs#devenv nixpkgs#direnv
 	useradd -mU vscode -G nix -s /bin/bash
 EOT
 ENV PATH="/nix/var/nix/profiles/default/bin:/nix/var/nix/profiles/default/sbin:$PATH"
