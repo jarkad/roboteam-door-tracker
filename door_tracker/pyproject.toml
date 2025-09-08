@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["python-lsp-server[all]>=1.13.1", "ruff>=0.12.11"]
+dev = ["python-lsp-server[all]>=1.13.1"]
 
 [tool.setuptools.packages.find]
 include = ['*']
