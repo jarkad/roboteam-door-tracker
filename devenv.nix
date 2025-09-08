@@ -57,6 +57,7 @@ in
 
   packages = [
     pkgs.git
+    pkgs.openssh
     pkgs.skopeo
   ];
 
