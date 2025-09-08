@@ -79,13 +79,13 @@ def change_status (request):
         
         tag_id = data["tag_id"]
         tag_scanned  = Tag.objects.filter(id = tag_id).first()
-        owner = tag.owner
+        owner = tag_scanned.owner
         new_status = Log.LogEntryType.CHECKOUT
 
         if (last_status.status==Log.LogEntryType.CHECKOUT):
             new_status = Log.LogEntryType.CHECKIN
 
-        log = Log.objects.create(type=new_status, tag=tag_scanned, time=datetime.datetime.now().isoformat())
+        log = Log.objects.create(type=new_status, Tag=tag_scanned, time=datetime.datetime.now().isoformat())
         log.save(force_insert=True)
     return
 

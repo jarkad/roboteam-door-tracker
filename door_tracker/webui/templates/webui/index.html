@@ -129,7 +129,9 @@
   <!-- Toolbar -->
   <div class="toolbar">
     <button id="remoteCheckout">Remote Checkout</button>
+    <button id="testChangeStatus">Test Change Status</button> <!-- New Button -->
   </div>
+
 
   <!-- Welcome Message -->
   <!-- Database Viewer -->
@@ -178,6 +180,37 @@
       }
       return '';
     }
+
+    // Attach event listener for the new button
+  document.getElementById('testChangeStatus').addEventListener('click', async () => {
+    try {
+      const response = await fetch('/ui/change_status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify({
+          tag_id: 4
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert(`✅ Success: ${data.message || 'Log entry created successfully.'}`);
+      } else {
+        alert(`❌ Error: ${data.message || 'Something went wrong.'}`);
+      }
+
+      // Refresh logs after success
+      if (response.ok) {
+        fetchLogs();
+      }
+    } catch (error) {
+      console.error('Error creating log:', error);
+      alert('⚠️ Could not reach server. Check console for details.');
+    }
+  });
   // Fetch and display logs
     async function fetchLogs() {
       try {
