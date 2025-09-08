@@ -131,6 +131,34 @@ in
     };
   };
 
+  files.".vscode/tasks.json".json = {
+    # See https://go.microsoft.com/fwlink/?LinkId=733558
+    # for the documentation about the tasks.json format
+    version = "2.0.0";
+    tasks =
+      # scripts
+      lib.mapAttrsToList (name: _: {
+        label = "script: ${name}";
+        type = "shell";
+        command = name;
+        group = "build";
+      }) (lib.removeAttrs config.scripts [ "django" ])
+      # containers
+      ++ lib.mapAttrsToList (name: _: {
+        label = "container: ${name}";
+        type = "shell";
+        command = "devenv container copy ${lib.escapeShellArg name}";
+        group = "build";
+      }) config.containers
+      # outputs
+      ++ lib.mapAttrsToList (name: _: {
+        label = "package: ${name}";
+        type = "shell";
+        command = "devenv build outputs.${lib.escapeShellArg name}";
+        group = "build";
+      }) config.outputs;
+  };
+
   ## Git hooks
 
   git-hooks.hooks = {

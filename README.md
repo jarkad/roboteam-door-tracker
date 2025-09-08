@@ -47,3 +47,9 @@ Don't forget to apply your new migration.
 ```
 uv run manage.py runserver
 ```
+
+## Pitfalls
+
+### Direnv
+
+If devenv fails for any reason (e.g. incorrect devenv.nix), direnv will silently load empty environment.

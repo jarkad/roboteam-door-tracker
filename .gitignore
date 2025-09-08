@@ -19,3 +19,4 @@ door_tracker/db.sqlite3
 /ruff.toml
 /schema.png
 /schema.svg
+/.vscode/tasks.json
