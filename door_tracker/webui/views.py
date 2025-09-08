@@ -3,9 +3,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.http import JsonResponse
+import json
+import datetime
 
 # Create your views here.
 from .models import Log
+from .models import Tag
 
 def index(request):
     if not request.user.is_authenticated:
@@ -47,6 +50,44 @@ def new_logout(request):
     logout(request)
     messages.success(request, 'Logged out')
     return redirect('login')
+
+def check_status(request):
+    if not request.user.is_authenticated:
+        return JsonResponse(
+                    {'status': 'error', 'message': 'Error. Log in to view data.'},
+                    status=400,
+                )
+    last_log = Log.objects.filter(tag__owner=request.user).select_related("tag").order_by("-time").first()
+    if not last_log:
+        return JsonResponse(
+            {'status': 'error', 'message': 'Error. Log not found.'},
+             status=400,
+        )
+    return JsonResponse({'status': last_log.get_type_display(), 'date': last_log.time.isoformat()}, status=200)
+
+    
+def change_status (request):
+    last_status = check_status(request)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse(
+                    {'status': 'error', 'message': 'Error. Invalid json data.'},
+                    status=400,
+                )
+        
+        tag_id = data["tag_id"]
+        tag_scanned  = Tag.objects.filter(id = tag_id).first()
+        owner = tag.owner
+        new_status = Log.LogEntryType.CHECKOUT
+
+        if (last_status.status==Log.LogEntryType.CHECKOUT):
+            new_status = Log.LogEntryType.CHECKIN
+
+        log = Log.objects.create(type=new_status, tag=tag_scanned, time=datetime.datetime.now().isoformat())
+        log.save(force_insert=True)
+    return
 
 
 def current_user_data(request):
