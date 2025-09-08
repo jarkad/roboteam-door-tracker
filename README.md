@@ -61,6 +61,16 @@ directory, in contrast to `manage.py`.
 
 ## Pitfalls
 
+### Pre-commit
+
+If pressing the "commit" button gives you an error, it's probably a
+failing pre-commit check. Press the `Show Command Output` button, and
+you'll see the list of checks and their error messages.
+
+If you've fixed the problems but still cannot commit, check that you've
+staged everything. Some pre-commit hooks run code formatters, and you
+need to manually stage their output.
+
 ### Devcontainers
 
 On first load, you'll see notifications like "cannot find git
