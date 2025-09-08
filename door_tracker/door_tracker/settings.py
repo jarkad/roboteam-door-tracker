@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',  # must be above staticfiles
     'django.contrib.staticfiles',
     'webui.apps.WebuiConfig',
+    'dbbackup',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,16 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+#Database backups
+# https://dev.to/daviekim13/database-backup-in-django-1h49
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR / 'backups'}
+
+# Set the database for dbbackup
+DBBACKUP_DATABASE = BASE_DIR / 'db.sqlite3'
+
 
 ROOT_URLCONF = 'door_tracker.urls'
 
