@@ -191,6 +191,7 @@ in
     prettier.enable = true;
     ripsecrets.enable = true;
     ruff.enable = true;
+    ruff-format.enable = true;
     shellcheck.enable = true;
     shfmt.enable = true;
     taplo.enable = true;
