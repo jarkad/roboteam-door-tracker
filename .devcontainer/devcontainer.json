@@ -21,6 +21,13 @@
       }
     }
   },
+  "mounts": [
+    {
+      "source": "nix-store-${devcontainerId}",
+      "target": "/nix",
+      "type": "volume"
+    }
+  ],
   "overrideCommand": false,
   "portsAttributes": {
     "*": {
