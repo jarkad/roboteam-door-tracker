@@ -55,7 +55,6 @@
     pkgs.nixfmt
     pkgs.shfmt
     pkgs.taplo
-    pkgs.treefmt
   ];
 
   ## Tests
@@ -74,30 +73,6 @@
     };
   };
 
-  files."treefmt.toml".toml = {
-    formatter.nixfmt = {
-      command = "nixfmt";
-      includes = [ "*.nix" ];
-    };
-    formatter.ruff = {
-      command = "ruff";
-      options = [ "format" ];
-      includes = [ "*.py" ];
-    };
-    formatter.shfmt = {
-      command = "shfmt";
-      includes = [
-        ".envrc"
-        "*.sh"
-      ];
-    };
-    formatter.taplo = {
-      command = "taplo";
-      options = [ "format" ];
-      includes = [ "*.toml" ];
-    };
-  };
-
   ## Git hooks
 
   git-hooks.hooks = {
@@ -112,10 +87,12 @@
     editorconfig-checker.enable = true;
     end-of-file-fixer.enable = true;
     fix-byte-order-marker.enable = true;
+    nixfmt-rfc-style.enable = true;
     ripsecrets.enable = true;
     ruff.enable = true;
     shellcheck.enable = true;
-    treefmt.enable = true;
+    shfmt.enable = true;
+    taplo.enable = true;
     uv-check.enable = true;
   };
 
