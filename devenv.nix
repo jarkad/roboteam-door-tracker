@@ -42,12 +42,7 @@
 
   ## Devcontainer
 
-  packages = [
-    pkgs.git
-    pkgs.nixfmt
-    pkgs.shfmt
-    pkgs.taplo
-  ];
+  packages = [ pkgs.git ];
 
   ## Tests
 
