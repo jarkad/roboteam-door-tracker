@@ -9,6 +9,7 @@ dependencies = [
   "django>=5.2.5",
   "dj-database-url>=3.0.1",
   "whitenoise[brotli]>=6.9.0",
+  "django-dbbackup>=5.0.0",
 ]
 
 [dependency-groups]

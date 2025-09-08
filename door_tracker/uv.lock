@@ -242,6 +242,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-dbbackup"
+version = "5.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/df/88/3b8fe59075369d828b31b77de931511b2479b7bd21489132a0123ce0656b/django_dbbackup-5.0.0.tar.gz", hash = "sha256:aa9cc88e1413adfec0e547dd91e0afed6dbb91a02459697663a9b988dbc71f18", size = 25046, upload-time = "2025-08-30T08:17:31.752Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/72/de/9d7c894b5bdf9825db8e8f3d89d12851a34e32ce43b94f0b88995a9feb1f/django_dbbackup-5.0.0-py3-none-any.whl", hash = "sha256:a0301b14a4bb3c7243a2fde76d09f8f572f16cd7639f75f4cd42d898fc1b82a2", size = 33110, upload-time = "2025-08-30T08:17:30.678Z" },
+]
+
+[[package]]
 name = "docstring-to-markdown"
 version = "0.17"
 source = { registry = "https://pypi.org/simple" }
@@ -555,6 +567,7 @@ dependencies = [
     { name = "daphne" },
     { name = "dj-database-url" },
     { name = "django" },
+    { name = "django-dbbackup" },
     { name = "whitenoise", extra = ["brotli"] },
 ]
 
@@ -569,6 +582,7 @@ requires-dist = [
     { name = "daphne", specifier = ">=4.2.1" },
     { name = "dj-database-url", specifier = ">=3.0.1" },
     { name = "django", specifier = ">=5.2.5" },
+    { name = "django-dbbackup", specifier = ">=5.0.0" },
     { name = "whitenoise", extras = ["brotli"], specifier = ">=6.9.0" },
 ]
 
