@@ -92,6 +92,7 @@
     end-of-file-fixer.enable = true;
     fix-byte-order-marker.enable = true;
     nixfmt-rfc-style.enable = true;
+    prettier.enable = true;
     ripsecrets.enable = true;
     ruff.enable = true;
     shellcheck.enable = true;
