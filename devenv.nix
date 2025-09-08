@@ -178,16 +178,22 @@ in
   ## Git hooks
 
   git-hooks.hooks = {
+    actionlint.enable = true;
+    check-executables-have-shebangs.enable = true;
     check-json.enable = true;
     check-merge-conflicts.enable = true;
+    check-shebang-scripts-are-executable.enable = true;
     check-symlinks.enable = true;
     check-toml.enable = true;
     check-yaml.enable = true;
     deadnix.enable = true;
     detect-private-keys.enable = true;
-    editorconfig-checker.enable = true;
+    eclint.enable = true;
     end-of-file-fixer.enable = true;
+    eslint.enable = true;
     fix-byte-order-marker.enable = true;
+    hadolint.enable = true;
+    markdownlint.enable = true;
     nixfmt-rfc-style.enable = true;
     prettier.enable = true;
     ripsecrets.enable = true;
@@ -196,6 +202,7 @@ in
     shellcheck.enable = true;
     shfmt.enable = true;
     taplo.enable = true;
+    trim-trailing-whitespace.enable = true;
     uv-check.enable = true;
   };
 
