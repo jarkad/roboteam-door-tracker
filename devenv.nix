@@ -45,6 +45,20 @@ in
     skopeo login docker.io -u roboteamtwente "$@"
   '';
 
+  scripts.build-container.exec = ''
+    set -eux
+    name=$1
+    shift
+    $(devenv build outputs.containers."$name".copyToDockerDaemon)/bin/copy-to-docker-daemon "$@"
+  '';
+
+  scripts.upload-container.exec = ''
+    set -eux
+    name=$1
+    shift
+    $(devenv build outputs.containers."$name".copyToRegistry)/bin/copy-to-registry "$@"
+  '';
+
   ## Languages
 
   languages.python = {
@@ -158,20 +172,28 @@ in
     version = "2.0.0";
     tasks =
       # scripts
-      lib.mapAttrsToList (
-        name: _:
-        {
-          label = "run script: ${name}";
-          type = "shell";
-          command = name;
-          group = "build";
-        }
-        // lib.optionalAttrs (name == "dev") {
-          group.kind = "build";
-          group.isDefault = name == "dev";
-          runOptions.runOn = "folderOpen";
-        }
-      ) (lib.removeAttrs config.scripts [ "django" ])
+      lib.mapAttrsToList
+        (
+          name: _:
+          {
+            label = "run script: ${name}";
+            type = "shell";
+            command = name;
+            group = "build";
+          }
+          // lib.optionalAttrs (name == "dev") {
+            group.kind = "build";
+            group.isDefault = name == "dev";
+            runOptions.runOn = "folderOpen";
+          }
+        )
+        (
+          lib.removeAttrs config.scripts [
+            "build-container"
+            "django"
+            "upload-container"
+          ]
+        )
       # containers
       ++ lib.concatMap (name: [
         {
