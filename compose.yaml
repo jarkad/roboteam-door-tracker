@@ -1,0 +1,11 @@
+services:
+  serve:
+    image: roboteamtwente/rfid-tracker-serve
+    ports:
+      - 8000:8000
+    volumes:
+      - db:/db
+    environment:
+      - DATABASE_URL=sqlite:///db/db.sqlite3
+volumes:
+  db:
