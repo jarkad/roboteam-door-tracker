@@ -41,7 +41,7 @@ in
   '';
 
   scripts.docker-login.exec = ''
-    skopeo login docker.io
+    skopeo login docker.io -u roboteamtwente "$@"
   '';
 
   ## Languages
