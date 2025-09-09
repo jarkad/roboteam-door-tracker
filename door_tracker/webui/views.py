@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 import json
 import time
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 # Import Custom Files
@@ -23,7 +24,7 @@ def index(request):
         request, 'webui/index.html', {'username': request.user.username}
     )
 
-
+@ensure_csrf_cookie
 def new_login(request):
     if request.user.is_authenticated:
         return redirect('index')
