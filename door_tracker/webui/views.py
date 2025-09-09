@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.http import JsonResponse
 import json
 
+# Import Custom Files
+from . import utils  # -> Helper functions
+
 # Create your views here.
 from .models import Log
 from .models import Tag
@@ -61,13 +64,8 @@ def new_logout(request):
     return redirect('login')
 
 
+@utils.require_authentication
 def check_status(request):
-    if not request.user.is_authenticated:
-        return JsonResponse(
-            {'status': 'error', 'message': 'Log in to view data.'},
-            status=400,
-        )
-
     last_log = (
         Log.objects.filter(tag__owner=request.user)
         .select_related('tag')
@@ -90,22 +88,17 @@ def check_status(request):
     return JsonResponse(
         {
             'status': 'success',
-            'state': last_log.type,  # raw enum value: "IN" / "OUT" / "WTF"
-            'state_display': last_log.get_type_display(),  # human label
+            'state': last_log.type,
+            'state_display': last_log.get_type_display(),
             'date': last_log.time.isoformat(),
         },
         status=200,
     )
 
 
+@utils.require_authentication
 def change_status(request):
-    if not request.user.is_authenticated:
-        return JsonResponse(
-            {'status': 'error', 'message': 'Log in to change status.'},
-            status=400,
-        )
-
-    # Parse JSON body
+    # at this point, request.user is guaranteed authenticated
     try:
         data = json.loads(request.body)
         tag_id = data['tag_id']
@@ -115,7 +108,6 @@ def change_status(request):
             status=400,
         )
 
-    # Resolve tag and ensure it belongs to the current user
     tag_scanned = (
         Tag.objects.select_related('owner')
         .filter(id=tag_id, owner=request.user)
@@ -127,18 +119,14 @@ def change_status(request):
             status=404,
         )
 
-    # Determine next state from the last log for this tag
     last_log = Log.objects.filter(tag=tag_scanned).order_by('-time').first()
-    if not last_log or last_log.type == Log.LogEntryType.CHECKOUT:
-        new_type = Log.LogEntryType.CHECKIN
-    else:
-        new_type = Log.LogEntryType.CHECKOUT
-
-    # Create new log (time is set via auto_now_add)
-    log = Log.objects.create(
-        type=new_type,
-        tag=tag_scanned,  # correct field name (lowercase)
+    new_type = (
+        Log.LogEntryType.CHECKIN
+        if not last_log or last_log.type == Log.LogEntryType.CHECKOUT
+        else Log.LogEntryType.CHECKOUT
     )
+
+    log = Log.objects.create(type=new_type, tag=tag_scanned)
 
     return JsonResponse(
         {
@@ -179,3 +167,7 @@ def current_user_data(request):
     ]
 
     return JsonResponse({'status': 'success', 'logs': data}, status=200)
+
+
+def register_scan(request):
+    return JsonResponse({'status': 'success'}, status=200)
