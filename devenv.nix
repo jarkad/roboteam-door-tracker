@@ -148,8 +148,12 @@ in
         config.outputs.packages.admin
         config.outputs.packages.init
         config.outputs.packages.serve
+        pkgs.tini
       ];
-      config.Cmd = [ "/bin/serve" ];
+      config.Cmd = [
+        "/bin/tini"
+        "/bin/serve"
+      ];
     };
   };
 
