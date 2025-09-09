@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -118,6 +119,18 @@ in
       admin migrate
       admin createsuperuser
     '';
+  };
+
+  outputs.container = inputs.nix2container.packages.${pkgs.system}.nix2container.buildImage {
+    name = "roboteamtwente/rfid-tracker-serve";
+    tag = "latest";
+    maxLayers = 125;
+    copyToRoot = [
+      config.outputs.admin
+      config.outputs.init
+      config.outputs.serve
+    ];
+    config.Cmd = [ "/bin/serve" ];
   };
 
   ## Containers
