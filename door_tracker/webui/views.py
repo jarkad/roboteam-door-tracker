@@ -3,14 +3,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.http import JsonResponse
+from django.utils import timezone
+from django.db.models import Sum
 import json
 
 # Import Custom Files
 from . import utils  # -> Helper functions
 
 # Create your views here.
-from .models import Log
-from .models import Tag
+from .models import Log, Tag, Statistics
 
 
 def index(request):
@@ -167,6 +168,124 @@ def current_user_data(request):
     ]
 
     return JsonResponse({'status': 'success', 'logs': data}, status=200)
+
+
+def minutes_today(request):
+    today = (
+        timezone.localdate()
+    )  # gets the current date in the current timezone
+    now = timezone.localtime()
+    minutes_worked = 0
+
+    logs = (
+        Log.objects.filter(
+            tag__owner=request.user,
+            time__date=today,  # filter only logs that happened today
+        )
+        .select_related('tag')
+        .order_by('time')
+    )
+
+    checkin_time = None
+    first_log = True
+
+    for log in logs:
+        if log.type == Log.LogEntryType.CHECKIN:
+            checkin_time = log.time
+            first_log = False
+        elif log.type == Log.LogEntryType.CHECKOUT:
+            if checkin_time and not first_log:
+                delta = timezone.localtime(log.time) - timezone.localtime(
+                    checkin_time
+                )
+                minutes_worked += int(delta.total_seconds() // 60)
+                checkin_time = None
+            elif first_log:
+                # First log is a checkout with no prior checkin today
+                midnight = timezone.make_aware(
+                    timezone.datetime.combine(
+                        timezone.localdate(log.time),
+                        timezone.datetime.min.time(),
+                    )
+                )
+                delta = timezone.localtime(log.time) - midnight
+                minutes_worked += int(delta.total_seconds() // 60)
+                first_log = False
+
+    # If the last log was a checkin and no checkout yet, count time until now
+    if checkin_time:
+        delta = now - timezone.localtime(checkin_time)
+        minutes_worked += int(delta.total_seconds() // 60)
+
+    return minutes_worked
+
+
+def minutes_week(request):
+    today = timezone.localdate()
+    start_of_week = today - timezone.timedelta(days=today.weekday())  # Monday
+
+    total_week = (
+        Statistics.objects.filter(
+            person=request.user,
+            date__date__gte=start_of_week,
+            date__date__lte=today,
+        ).aggregate(total=Sum('minutes_day'))['total']
+        or 0
+    )
+
+    return total_week
+
+
+def minutes_month(request):
+    today = timezone.localdate()
+    start_of_month = today.replace(day=1)
+
+    total_month = (
+        Statistics.objects.filter(
+            person=request.user,
+            date__date__gte=start_of_month,
+            date__date__lte=today,
+        ).aggregate(total=Sum('minutes_day'))['total']
+        or 0
+    )
+
+    return total_month
+
+
+def save_statistics(request):
+    # Get current time in the active timezone
+    now = timezone.localtime()
+
+    # Get today's date (without time) to filter existing statistics
+    today_date = now.date()
+
+    # Calculate minutes
+    minutes_today_val = minutes_today(request)
+    minutes_week_val = minutes_week(request)
+    minutes_month_val = minutes_month(request)
+
+    # Check if a Statistics object exists for today
+    stats, created = Statistics.objects.update_or_create(
+        person=request.user,
+        date__date=today_date,  # filter by date portion only
+        defaults={
+            'minutes_day': minutes_today_val,
+            'minutes_week': minutes_week_val,
+            'minutes_month': minutes_month_val,
+            'date': now,  # update the datetime to current time
+        },
+    )
+
+    return JsonResponse(
+        {
+            'minutes_day': minutes_today_val,
+            'minutes_week': minutes_week_val,
+            'minutes_month': minutes_month_val,
+            'date': stats.date,
+            'created': created,
+        },
+        status=200,
+    )
 
 
 def register_scan(request):
