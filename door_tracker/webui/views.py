@@ -356,7 +356,7 @@ def register_scan(request):
 
     if not scanner:
         return JsonResponse(
-            {'status': 'error', 'message': 'Device not authorized'}, status=403
+            {'status': 'error', 'message': 'Scanner not authorized'}, status=403
         )
 
     tag = Tag.objects.select_related('owner').filter(tag=card_id).first()
