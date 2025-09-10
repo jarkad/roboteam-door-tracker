@@ -28,10 +28,10 @@ class Log(models.Model):
             return 'WebUI'
         if self.tag.get_state() != TagState.UNAUTHORIZED:
             return f'{self.tag.owner.get_full_name()} ({self.tag.name})'
-        return '-'
+        return None
 
     def __str__(self):
-        return ' — '.join([str(self.time), self.type, self.person()])
+        return ' — '.join([str(self.time), self.type, self.person() or '-'])
 
 
 class Membership(models.Model):
