@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import OuterRef, Subquery
@@ -24,7 +26,7 @@ class Log(models.Model):
     def person(self):
         if not self.tag:
             return 'WebUI'
-        if self.tag.is_claimed():
+        if self.tag.get_state() != TagState.UNAUTHORIZED:
             return f'{self.tag.owner.get_full_name()} ({self.tag.name})'
         return '-'
 
@@ -61,8 +63,14 @@ class Membership(models.Model):
     objects = MembershipManager()
 
 
+class TagState(Enum):
+    CLAIMED = 'claimed'
+    PENDING_REGISTRATION = 'pending_registration'
+    UNAUTHORIZED = 'unauthorized'
+
+
 class Tag(models.Model):
-    tag = models.BinaryField()
+    tag = models.BinaryField(blank=True, null=True)
     name = models.CharField(blank=True)
     owner = models.ForeignKey(
         User,
@@ -75,11 +83,23 @@ class Tag(models.Model):
     def owner_name(self):
         return self.owner.get_full_name()
 
-    def is_claimed(self):
-        return self.owner is not None
-
     def binary_id(self):
         return self.tag.hex().upper()
+
+    def get_state(self):
+        has_tag = self.tag is not None
+        has_name = self.name != ''
+        has_owner = self.owner is not None
+
+        assert has_name == has_owner
+        assert has_tag or has_owner
+
+        if has_tag and has_owner:
+            return TagState.CLAIMED
+        if not has_tag and has_owner:
+            return TagState.PENDING_REGISTRATION
+        if has_tag and not has_owner:
+            return TagState.UNAUTHORIZED
 
     def __str__(self):
         n = self.name
