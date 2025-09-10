@@ -36,6 +36,10 @@ in
     django createsuperuser "$@"
   '';
 
+  scripts.repl.exec = ''
+    django shell "$@"
+  '';
+
   scripts.docker-login.exec = ''
     skopeo login docker.io
   '';
