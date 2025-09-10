@@ -31,7 +31,7 @@ class Log(models.Model):
         return None
 
     def __str__(self):
-        return ' — '.join([str(self.time), self.type, self.person() or '-'])
+        return ' | '.join([str(self.time), self.type, self.person() or '-'])
 
 
 class Membership(models.Model):
