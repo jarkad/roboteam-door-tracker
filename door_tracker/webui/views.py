@@ -1,5 +1,5 @@
 import json
-import time
+from base64 import b64decode, b64encode
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -8,14 +8,16 @@ from django.db.models import Avg, Sum
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from rest_framework import serializers
+from rest_framework.decorators import api_view
 
 # Import Custom Files
 from . import utils  # -> Helper functions
 from .forms import RegistrationForm
 
 # Create your views here.
-from .models import Log, Statistics, Tag
+from .models import Log, Scanner, Statistics, Tag, TagState, is_checked_in
 
 
 def index(request):
@@ -100,6 +102,21 @@ def check_status(request):
     )
 
 
+class Base64Field(serializers.Field):
+    def to_representation(self, value):
+        return b64encode(value)
+
+    def to_internal_value(self, data):
+        if not isinstance(data, str):
+            self.fail('type_error', input_type=type(data).__name__)
+        return b64decode(data)
+
+    default_error_messages = {
+        'type_error': 'Incorrect type. Expected a string, but got {input_type}'
+    }
+
+
+@api_view(['POST'])
 @utils.require_authentication
 def change_status(request):
     # at this point, request.user is guaranteed authenticated
@@ -304,81 +321,78 @@ def save_statistics(request):
     )
 
 
+class RegisterScanSerializer(serializers.Serializer):
+    device_id = serializers.CharField()
+    card_id = Base64Field()
+
+
+@csrf_exempt
+@api_view(['POST'])
 def register_scan(request):
-    try:
-        body = json.loads(request.body or '{}')
-    except json.JSONDecodeError:
+    serializer = RegisterScanSerializer(data=request.data)
+    if not serializer.is_valid():
         return JsonResponse(
             {'status': 'error', 'message': 'Invalid JSON payload'}, status=400
         )
 
-    raw_card = body.get('cardID')
-    # device_id = body.get('deviceID')  # not used yet
+    card_id = serializer.validated_data['card_id']
+    scanner_id = serializer.validated_data['device_id']
 
-    if raw_card is None or str(raw_card).strip() == '':
+    scanner = Scanner.objects.filter(pk=scanner_id).first()
+
+    if not scanner:
         return JsonResponse(
-            {'status': 'error', 'message': 'cardID is required'}, status=400
+            {'status': 'error', 'message': 'Device not authorized'}, status=403
         )
 
-    # Always treat it as string for normalization steps
-    raw_card_str = str(raw_card).strip()
-    tag = None
+    tag = Tag.objects.select_related('owner').filter(tag=card_id).first()
 
-    # 1) Try as integer primary key
-    if raw_card_str.isdigit():
-        tag = Tag.objects.select_related('owner').filter(id=int(raw_card_str)).first()
-
-    # 2) Try as name (case-insensitive), including a normalized version (strip colons/spaces)
     if tag is None:
-        normalized_name = ''.join(ch for ch in raw_card_str if ch.isalnum())
-        tag = (
-            Tag.objects.select_related('owner')
-            .filter(name__iexact=raw_card_str)
-            .first()
-            or Tag.objects.select_related('owner')
-            .filter(name__iexact=normalized_name)
-            .first()
-        )
+        tag = Tag.objects.filter(tag=None).first()
 
-    # 3) Try as hex-encoded UID for BinaryField `tag`
     if tag is None:
-        try:
-            # Keep only hex chars, ignore separators like ":" or spaces
-            hex_str = ''.join(
-                ch for ch in raw_card_str if ch in '0123456789abcdefABCDEF'
+        tag = Tag(tag=card_id)
+        tag.save()
+
+    log = Log(scanner=scanner, tag=tag)
+
+    match tag.get_state():
+        case TagState.UNAUTHORIZED:
+            log.type = Log.LogEntryType.UNKNOWN
+            log.save()
+            return JsonResponse(
+                {'status': 'error', 'message': 'Card not registered'},
+                status=404,
             )
-            if hex_str:
-                tag_bytes = bytes.fromhex(hex_str)
-                tag = Tag.objects.select_related('owner').filter(tag=tag_bytes).first()
-        except ValueError:
-            # Not valid hex — ignore
-            pass
 
-    if tag is None:
-        return JsonResponse(
-            {'status': 'error', 'message': 'Card not registered'}, status=404
-        )
+        case TagState.PENDING_REGISTRATION:
+            log.type = Log.LogEntryType.REGISTRATION
+            log.save()
+            tag.tag = card_id
+            tag.save()
+            return JsonResponse(
+                {
+                    'state': 'register',
+                    'name': tag.owner_name(),
+                    'dailyhours': 42,
+                    'weeklyhours': 420,
+                }
+            )
 
-    if not tag.owner:
-        return JsonResponse(
-            {'status': 'error', 'message': 'Card has no owner'}, status=404
-        )
-
-    user = tag.owner
-
-    # Build response matching your OpenAPI schema (hours left None for now)
-    data = {
-        'name': user.first_name or '',
-        'last-name': user.last_name or '',
-        'user-name': user.username,
-        'state': 'register',  # you can later switch to checkin/checkout
-        'time': int(time.time()),  # epoch time
-        'dailyhours': None,
-        'weeklyhours': None,
-        'tag_id': tag.id,
-    }
-
-    return JsonResponse(data, status=200)
+        case TagState.CLAIMED:
+            checkout = is_checked_in(tag.owner)
+            log.type = (
+                Log.LogEntryType.CHECKOUT if checkout else Log.LogEntryType.CHECKIN
+            )
+            log.save()
+            return JsonResponse(
+                {
+                    'state': 'checkout' if checkout else 'checkin',
+                    'name': tag.owner_name(),
+                    'dailyhours': 42,  # TODO
+                    'weeklyhours': 420,  # TODO
+                }
+            )
 
 
 def sign_up(request):
