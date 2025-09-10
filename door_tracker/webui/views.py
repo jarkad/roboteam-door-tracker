@@ -1,4 +1,3 @@
-import json
 from base64 import b64decode, b64encode
 
 from django.contrib import messages
@@ -116,6 +115,10 @@ class Base64Field(serializers.Field):
     }
 
 
+class ChangeStatusSerializer(serializers.Serializer):
+    tag_id = Base64Field(required=True)
+
+
 def serializer_error(serializer):
     msg = 'Invalid request:\n'
     for field, errors in serializer.errors.items():
@@ -132,18 +135,16 @@ def serializer_error(serializer):
 @utils.require_authentication
 def change_status(request):
     # at this point, request.user is guaranteed authenticated
-    try:
-        data = json.loads(request.body)
-        tag_id = data['tag_id']
-    except (json.JSONDecodeError, KeyError):
+    serializer = ChangeStatusSerializer(data=request.data)
+    if not serializer.is_valid():
         return JsonResponse(
-            {'status': 'error', 'message': 'Invalid JSON payload.'},
+            {'status': 'error', 'message': serializer_error(serializer)},
             status=400,
         )
 
     tag_scanned = (
         Tag.objects.select_related('owner')
-        .filter(id=tag_id, owner=request.user)
+        .filter(id=serializer.validated_data.tag_id, owner=request.user)
         .first()
     )
     if not tag_scanned:
