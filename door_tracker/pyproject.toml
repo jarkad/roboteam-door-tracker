@@ -16,4 +16,7 @@ dependencies = [
 dev = ["python-lsp-server[all]>=1.13.1"]
 
 [tool.setuptools.packages.find]
-include = ['*']
+include = ["*"]
+
+[tool.ruff.lint]
+extend-select = ["I"]
