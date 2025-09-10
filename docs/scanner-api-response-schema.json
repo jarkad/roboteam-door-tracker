@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "state": {
+          "enum": ["checkin", "checkout"]
+        },
+        "name": {
+          "type": "string"
+        },
+        "dailyhours": {
+          "type": "integer",
+          "$comment": "Hours worked today"
+        },
+        "weeklyhours": {
+          "type": "integer",
+          "$comment": "Hours worked this week"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "properties": {
+        "state": {
+          "const": "register"
+        },
+        "name": {
+          "type": "string"
+        },
+        "dailyhours": {
+          "const": 42,
+          "$comment": "unused"
+        },
+        "weeklyhours": {
+          "const": 420,
+          "$comment": "unused"
+        }
+      },
+      "$comment": "Returned after successfully registering a tag"
+    }
+  ]
+}
