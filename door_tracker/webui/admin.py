@@ -1,7 +1,7 @@
-from django.contrib.auth.models import User
 from django.contrib import admin
+from django.contrib.auth.models import User
 
-from .models import Log, Membership, Tag, SubTeam, Job
+from .models import Job, Log, Membership, SubTeam, Tag
 
 
 class LogSubteamListFilter(admin.SimpleListFilter):
@@ -14,9 +14,7 @@ class LogSubteamListFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         if not self.value():
             return queryset
-        members = Membership.objects.filter_effective().filter(
-            subteam=self.value()
-        )
+        members = Membership.objects.filter_effective().filter(subteam=self.value())
         return queryset.filter(tag__owner__in=members.values('person'))
 
 
@@ -48,7 +46,7 @@ class MembershipAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'owner_name', 'binary_id')
+    list_display = ('name', 'owner_name', 'status', 'binary_id')
 
 
 @admin.register(SubTeam)

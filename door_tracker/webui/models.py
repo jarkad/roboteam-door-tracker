@@ -90,6 +90,15 @@ class Tag(models.Model):
             return None
         return self.tag.hex().upper()
 
+    def status(self):
+        match self.get_state():
+            case TagState.CLAIMED:
+                return 'claimed'
+            case TagState.PENDING_REGISTRATION:
+                return 'pending registration'
+            case TagState.UNAUTHORIZED:
+                return 'invalid'
+
     def get_state(self):
         has_tag = self.tag is not None
         has_name = self.name != ''
