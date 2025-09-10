@@ -1,0 +1,72 @@
+openapi: 3.0.4
+info:
+  title: RFiD Time Tracker API
+  description: |-
+    Simple API Doc for the simple communication between the RFiD scanner and the server
+  version: "0.1"
+paths:
+  /register_scan:
+    post:
+      summary: Anytime a RFiD chip is scanned, the device will send this request to the server
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Scan"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScanResponse"
+        "403":
+          description: Device is not authorized
+        "404":
+          description: Card is not registered
+        "500":
+          description: General server error
+components:
+  schemas:
+    Scan:
+      type: object
+      properties:
+        deviceID:
+          type: string
+          example: "ASFHAUHLAHLKALFHSAFLKHUSALKFHALKSHLKSDAHLKADS"
+        cardID:
+          type: string
+          example: "AIUFHAHFS:AFS:FAJ:LKJFSA:LKA:LKSAFJFSA"
+      xml:
+        name: category
+
+    ScanResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Joe"
+        last-name:
+          type: string
+          example: "Doe"
+        state:
+          type: string
+          description: Checked in or Out
+          example: checkin
+          enum:
+            - checkin
+            - checkout
+            - register
+        time:
+          type: epoch time
+        dailyhours:
+          type: integer
+          format: int8
+          example: 8
+          description: Optional, if state is checkin
+        weeklyhours:
+          type: integer
+          format: int8
+          example: 34
+      xml:
+        name: category
