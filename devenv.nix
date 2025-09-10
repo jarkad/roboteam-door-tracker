@@ -60,7 +60,9 @@ in
   ## Devcontainer
 
   packages = [
+    pkgs.curl
     pkgs.git
+    pkgs.httpie
     pkgs.openssh
     pkgs.skopeo
   ];
