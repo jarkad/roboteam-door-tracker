@@ -6,6 +6,9 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.db.models import Sum
 import json
+import time
+from django.views.decorators.csrf import ensure_csrf_cookie
+
 
 # Import Custom Files
 from . import utils  # -> Helper functions
@@ -23,6 +26,7 @@ def index(request):
     )
 
 
+@ensure_csrf_cookie
 def new_login(request):
     if request.user.is_authenticated:
         return redirect('index')
@@ -289,4 +293,85 @@ def save_statistics(request):
 
 
 def register_scan(request):
-    return JsonResponse({'status': 'success'}, status=200)
+    try:
+        body = json.loads(request.body or '{}')
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {'status': 'error', 'message': 'Invalid JSON payload'}, status=400
+        )
+
+    raw_card = body.get('cardID')
+    # device_id = body.get('deviceID')  # not used yet
+
+    if raw_card is None or str(raw_card).strip() == '':
+        return JsonResponse(
+            {'status': 'error', 'message': 'cardID is required'}, status=400
+        )
+
+    # Always treat it as string for normalization steps
+    raw_card_str = str(raw_card).strip()
+    tag = None
+
+    # 1) Try as integer primary key
+    if raw_card_str.isdigit():
+        tag = (
+            Tag.objects.select_related('owner')
+            .filter(id=int(raw_card_str))
+            .first()
+        )
+
+    # 2) Try as name (case-insensitive), including a normalized version (strip colons/spaces)
+    if tag is None:
+        normalized_name = ''.join(ch for ch in raw_card_str if ch.isalnum())
+        tag = (
+            Tag.objects.select_related('owner')
+            .filter(name__iexact=raw_card_str)
+            .first()
+            or Tag.objects.select_related('owner')
+            .filter(name__iexact=normalized_name)
+            .first()
+        )
+
+    # 3) Try as hex-encoded UID for BinaryField `tag`
+    if tag is None:
+        try:
+            # Keep only hex chars, ignore separators like ":" or spaces
+            hex_str = ''.join(
+                ch for ch in raw_card_str if ch in '0123456789abcdefABCDEF'
+            )
+            if hex_str:
+                tag_bytes = bytes.fromhex(hex_str)
+                tag = (
+                    Tag.objects.select_related('owner')
+                    .filter(tag=tag_bytes)
+                    .first()
+                )
+        except ValueError:
+            # Not valid hex — ignore
+            pass
+
+    if tag is None:
+        return JsonResponse(
+            {'status': 'error', 'message': 'Card not registered'}, status=404
+        )
+
+    if not tag.owner:
+        return JsonResponse(
+            {'status': 'error', 'message': 'Card has no owner'}, status=404
+        )
+
+    user = tag.owner
+
+    # Build response matching your OpenAPI schema (hours left None for now)
+    data = {
+        'name': user.first_name or '',
+        'last-name': user.last_name or '',
+        'user-name': user.username,
+        'state': 'register',  # you can later switch to checkin/checkout
+        'time': int(time.time()),  # epoch time
+        'dailyhours': None,
+        'weeklyhours': None,
+        'tag_id': tag.id,
+    }
+
+    return JsonResponse(data, status=200)

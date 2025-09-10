@@ -14,6 +14,7 @@
         align-items: center;
         height: 100vh;
       }
+
       .login-container {
         background: white;
         padding: 30px;
@@ -23,6 +24,7 @@
         max-width: 420px;
         text-align: center;
       }
+
       .logo {
         width: 80px;
         height: 80px;
@@ -35,25 +37,30 @@
         color: white;
         font-size: 32px;
       }
+
       .login-container h2 {
         color: #333;
         margin-bottom: 25px;
         font-weight: 600;
       }
+
       .login-container form {
         display: flex;
         flex-direction: column;
         gap: 15px;
       }
+
       .form-group {
         text-align: left;
       }
+
       .form-group label {
         display: block;
         margin-bottom: 8px;
         font-weight: 500;
         color: #444;
       }
+
       .login-container input {
         padding: 14px;
         border: 1px solid #ddd;
@@ -63,11 +70,13 @@
         box-sizing: border-box;
         transition: border-color 0.3s;
       }
+
       .login-container input:focus {
         border-color: #4b0082;
         outline: none;
         box-shadow: 0 0 0 2px rgba(75, 0, 130, 0.2);
       }
+
       .login-container button {
         padding: 14px;
         background: #4b0082;
@@ -80,17 +89,21 @@
         margin-top: 10px;
         transition: background 0.3s;
       }
+
       .login-container button:hover {
         background: #360060;
       }
+
       .login-container button:disabled {
         background: #9b80b8;
         cursor: not-allowed;
       }
+
       .messages {
         margin-bottom: 20px;
         min-height: 40px;
       }
+
       .messages .error {
         color: #d32f2f;
         background: #ffebee;
@@ -98,6 +111,7 @@
         border-radius: 6px;
         border-left: 4px solid #d32f2f;
       }
+
       .messages .success {
         color: #388e3c;
         background: #e8f5e9;
@@ -105,6 +119,7 @@
         border-radius: 6px;
         border-left: 4px solid #388e3c;
       }
+
       .demo-note {
         margin-top: 25px;
         padding: 12px;
@@ -115,7 +130,9 @@
       }
     </style>
   </head>
+
   <body>
+    {% csrf_token %}
     <div class="login-container">
       <div class="logo">RT</div>
       <h2>RoboTeam Twente Login</h2>
@@ -150,78 +167,70 @@
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const loginForm = document.getElementById('loginForm')
-        const messagesContainer = document.getElementById('messages')
-        const loginButton = document.getElementById('loginButton')
+      document.addEventListener("DOMContentLoaded", function () {
+        const loginForm = document.getElementById("loginForm");
+        const messagesContainer = document.getElementById("messages");
+        const loginButton = document.getElementById("loginButton");
 
         function showMessage(text, type) {
-          messagesContainer.style.display = 'block'
-          messagesContainer.innerHTML = `<div class="${type}">${text}</div>`
+          messagesContainer.style.display = "block";
+          messagesContainer.innerHTML = `<div class="${type}">${text}</div>`;
         }
 
-        loginForm.addEventListener('submit', async function (e) {
-          e.preventDefault()
+        loginForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-          const username = document.getElementById('username').value
-          const password = document.getElementById('password').value
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
 
           if (!username || !password) {
-            showMessage('Please fill in all fields', 'error')
-            return
+            showMessage("Please fill in all fields", "error");
+            return;
           }
 
-          loginButton.textContent = 'Logging in...'
-          loginButton.disabled = true
+          loginButton.textContent = "Logging in...";
+          loginButton.disabled = true;
 
           try {
-            const response = await fetch('/ui/login', {
-              method: 'POST',
+            const response = await fetch("/ui/login", {
+              method: "POST",
               headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': getCSRFToken(),
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": getCSRFToken(),
               },
               body: new URLSearchParams({
                 username: username,
                 password: password,
               }),
-            })
+            });
 
-            const data = await response.json()
+            const data = await response.json();
 
             if (response.ok) {
-              showMessage(`Welcome Comrade ${username}`, 'success')
-              localStorage.setItem('username', username)
+              showMessage(`Welcome Comrade ${username}`, "success");
+              localStorage.setItem("username", username);
               setTimeout(() => {
-                window.location.href = window.location.origin + '/ui/'
-              }, 1000)
+                window.location.href = window.location.origin + "/ui/";
+              }, 1000);
             } else {
               showMessage(
-                data.message || 'Invalid username or password',
-                'error',
-              )
-              loginButton.textContent = 'Login'
-              loginButton.disabled = false
+                data.message || "Invalid username or password",
+                "error",
+              );
+              loginButton.textContent = "Login";
+              loginButton.disabled = false;
             }
           } catch (error) {
-            showMessage('An error occurred. Please try again.', 'error')
-            loginButton.textContent = 'Login'
-            loginButton.disabled = false
+            showMessage("An error occurred. Please try again.", "error");
+            loginButton.textContent = "Login";
+            loginButton.disabled = false;
           }
-        })
+        });
 
         function getCSRFToken() {
-          const name = 'csrftoken'
-          const cookies = document.cookie.split(';')
-          for (let cookie of cookies) {
-            const [key, value] = cookie.trim().split('=')
-            if (key === name) {
-              return value
-            }
-          }
-          return ''
+          return document.querySelector("[name=csrfmiddlewaretoken]").value;
         }
-      })
+      });
     </script>
   </body>
 </html>

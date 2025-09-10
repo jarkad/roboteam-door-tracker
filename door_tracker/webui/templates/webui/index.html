@@ -116,7 +116,9 @@
       }
     </style>
   </head>
+
   <body>
+    {% csrf_token %}
     <!-- Header -->
     <div class="header">
       <div class="logo">🤖 RoboTeam Twente</div>
@@ -173,15 +175,7 @@
         });
 
       function getCSRFToken() {
-        const name = "csrftoken";
-        const cookies = document.cookie.split(";");
-        for (let cookie of cookies) {
-          const [key, value] = cookie.trim().split("=");
-          if (key === name) {
-            return value;
-          }
-        }
-        return "";
+        return document.querySelector("[name=csrfmiddlewaretoken]").value;
       }
 
       // Attach event listener for the new button
@@ -206,7 +200,7 @@
                 `✅ Success: ${data.message || "Log entry created successfully."}`,
               );
             } else {
-              alert(`❌ Error: ${data.message || "Something went wrong."}`);
+              alert(`❌ Error:\n${data.message || "Something went wrong."}`);
             }
 
             // Refresh logs after success
