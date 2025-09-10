@@ -116,6 +116,18 @@ class Base64Field(serializers.Field):
     }
 
 
+def serializer_error(serializer):
+    msg = 'Invalid request:\n'
+    for field, errors in serializer.errors.items():
+        if field == 'non_field_errors':
+            msg += '  general errors:\n'
+        else:
+            msg += f'  field {field}:\n'
+        for error in errors:
+            msg += f'    {error}\n'
+    return msg
+
+
 @api_view(['POST'])
 @utils.require_authentication
 def change_status(request):
@@ -332,7 +344,8 @@ def register_scan(request):
     serializer = RegisterScanSerializer(data=request.data)
     if not serializer.is_valid():
         return JsonResponse(
-            {'status': 'error', 'message': 'Invalid JSON payload'}, status=400
+            {'status': 'error', 'message': serializer_error(serializer)},
+            status=400,
         )
 
     card_id = serializer.validated_data['card_id']
