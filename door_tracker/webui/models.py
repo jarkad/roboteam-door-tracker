@@ -12,6 +12,7 @@ class Log(models.Model):
         CHECKIN = 'IN', 'Check-in'
         CHECKOUT = 'OUT', 'Check-out'
         UNKNOWN = 'WTF', 'Card not linked'
+        REGISTRATION = 'REG', 'Card registered'
 
     type = models.CharField(max_length=3, choices=LogEntryType.choices)
     scanner = models.ForeignKey(
