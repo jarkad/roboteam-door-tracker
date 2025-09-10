@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 
-from .models import Job, Log, Membership, SubTeam, Tag
+from .models import Job, Log, Membership, Scanner, SubTeam, Tag
 
 
 class LogSubteamListFilter(admin.SimpleListFilter):
@@ -33,7 +33,7 @@ class LogPersonListFilter(admin.SimpleListFilter):
 
 @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
-    list_display = ('time', 'type', 'person')
+    list_display = ('time', 'type', 'person', 'scanner')
     ordering = ('-time',)
     list_filter = (LogSubteamListFilter, LogPersonListFilter)
 
@@ -57,6 +57,17 @@ class NamedAdmin(admin.ModelAdmin):
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
     list_display = ('name', 'quota')
+
+
+@admin.register(Scanner)
+class ScannerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'id')
+
+    def get_readonly_fields(self, request, obj=None):
+        default = super().get_readonly_fields(request, obj)
+        if obj is not None:  # when editing
+            default = list(default) + ['id']
+        return default
 
 
 # this ungodly hack disables alphabetical sorting of models

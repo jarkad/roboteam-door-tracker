@@ -14,6 +14,13 @@ class Log(models.Model):
         UNKNOWN = 'WTF', 'Card not linked'
 
     type = models.CharField(max_length=3, choices=LogEntryType.choices)
+    scanner = models.ForeignKey(
+        'Scanner',
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='logs',
+    )
     tag = models.ForeignKey(
         'Tag',
         blank=True,
@@ -151,3 +158,11 @@ class Statistics(models.Model):
     minutes_month = models.IntegerField()
     average_week = models.IntegerField()
     total_minutes = models.IntegerField()
+
+
+class Scanner(models.Model):
+    id = models.CharField(primary_key=True)
+    name = models.CharField()
+
+    def __str__(self):
+        return self.name
