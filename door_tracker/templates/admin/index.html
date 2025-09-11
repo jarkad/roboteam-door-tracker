@@ -1,7 +1,21 @@
-{% extends "admin/base_site.html" %} {% load i18n static log %} {% block coltype
-%} colM {% endblock %} {% block bodyclass %} {{ block.super }} dashboard {%
-endblock %} {% block nav-breadcrumbs %} {% endblock %} {% block nav-sidebar %}
-{% endblock %} {% block content %}
+{% extends "admin/base_site.html" %}
+{% load i18n static log %}
+
+{% block coltype %}
+colM
+{% endblock %}
+
+{% block bodyclass %}
+{{ block.super }} dashboard
+{% endblock %}
+
+{% block nav-breadcrumbs %}
+{% endblock %}
+
+{% block nav-sidebar %}
+{% endblock %}
+
+{% block content %}
 <div id="content-main">
   <!-- Admin Actions Module -->
   <div class="module" style="margin-bottom: 20px">
@@ -15,73 +29,71 @@ endblock %} {% block nav-breadcrumbs %} {% endblock %} {% block nav-sidebar %}
     </div>
   </div>
 
-  {% include "admin/app_list.html" with app_list=app_list show_changelinks=True
-  %}
+  {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
 </div>
-{% endblock %} {% block sidebar %}
+{% endblock %}
+
+{% block sidebar %}
 <div id="content-related">
   <div class="module" id="recent-actions-module">
     <h2>{% translate 'Recent actions' %}</h2>
     <h3>{% translate 'My actions' %}</h3>
-    {% get_admin_log 10 as admin_log for_user user %} {% if not admin_log %}
-    <p>{% translate 'None available' %}</p>
+    {% get_admin_log 10 as admin_log for_user user %}
+    {% if not admin_log %}
+      <p>{% translate 'None available' %}</p>
     {% else %}
-    <ul class="actionlist">
-      {% for entry in admin_log %}
-      <li
-        class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}"
-      >
-        <span class="visually-hidden">
-          {% if entry.is_addition %}{% translate 'Added:' %} {% elif
-          entry.is_change %}{% translate 'Changed:' %} {% elif entry.is_deletion
-          %}{% translate 'Deleted:' %}{% endif %}
-        </span>
-        {% if entry.is_deletion or not entry.get_admin_url %} {{
-        entry.object_repr }} {% else %}
-        <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
-        {% endif %}
-        <br />
-        {% if entry.content_type %}
-        <span class="mini quiet"
-          >{% filter capfirst %}{{ entry.content_type.name }}{% endfilter
-          %}</span
-        >
-        {% else %}
-        <span class="mini quiet">{% translate 'Unknown content' %}</span>
-        {% endif %}
-      </li>
-      {% endfor %}
-    </ul>
+      <ul class="actionlist">
+        {% for entry in admin_log %}
+          <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+            <span class="visually-hidden">
+              {% if entry.is_addition %}{% translate 'Added:' %}
+              {% elif entry.is_change %}{% translate 'Changed:' %}
+              {% elif entry.is_deletion %}{% translate 'Deleted:' %}{% endif %}
+            </span>
+            {% if entry.is_deletion or not entry.get_admin_url %}
+              {{ entry.object_repr }}
+            {% else %}
+              <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+            {% endif %}
+            <br />
+            {% if entry.content_type %}
+              <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+            {% else %}
+              <span class="mini quiet">{% translate 'Unknown content' %}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
     {% endif %}
   </div>
 </div>
-{% endblock %} {% block extrabody %}
+{% endblock %}
+
+{% block extrabody %}
 <script>
-  let linkExpiration = null;
+let linkExpiration = null;
 
-  document
-    .getElementById("generate-link-btn")
-    .addEventListener("click", function () {
-      fetch("{% url 'admin:generate_register_link' %}")
-        .then((response) => response.json())
-        .then((data) => {
-          const div = document.getElementById("register-link");
-          div.innerHTML = `<a href="${data.link}" target="_blank">${data.link}</a>`;
-          linkExpiration = new Date(data.expires_at);
-        })
-        .catch((err) => {
-          console.error(err);
-          alert("Failed to generate link.");
-        });
-    });
-
-  // Optional: check every 10 seconds if link expired
-  setInterval(() => {
-    if (linkExpiration && new Date() > linkExpiration) {
+document.getElementById("generate-link-btn").addEventListener("click", function () {
+  fetch("{% url 'admin:generate_register_link' %}")
+    .then((response) => response.json())
+    .then((data) => {
       const div = document.getElementById("register-link");
-      div.innerHTML = ""; // hide the link
-      linkExpiration = null;
-    }
-  }, 10000);
+      div.innerHTML = `<a href="${data.link}" target="_blank">${data.link}</a>`;
+      linkExpiration = new Date(data.expires_at);
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("Failed to generate link.");
+    });
+});
+
+// Optional: check every 10 seconds if link expired
+setInterval(() => {
+  if (linkExpiration && new Date() > linkExpiration) {
+    const div = document.getElementById("register-link");
+    div.innerHTML = ""; // hide the link
+    linkExpiration = null;
+  }
+}, 10000);
 </script>
 {% endblock %}
