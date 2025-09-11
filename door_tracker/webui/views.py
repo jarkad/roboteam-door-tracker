@@ -293,6 +293,10 @@ def save_statistics(request):
         date__date=today_date,  # filter by date portion only
         defaults={
             'minutes_day': minutes_today_val,
+            'minutes_week': 0,
+            'minutes_month': 0,
+            'average_week': 0,
+            'total_minutes': 0,
             'date': now,
         },
     )
@@ -332,6 +336,28 @@ def save_statistics(request):
         },
         status=200,
     )
+
+
+def get_statistics(request):
+    myStats = Statistics.objects.filter(person=request.user).first()
+    if not myStats:
+        return JsonResponse(
+            {'status': 'error', 'message': 'No statistics found'}, status=404
+        )
+
+    data = {
+        'status': 'success',
+        'stats': {
+            'date': myStats.date.isoformat(),
+            'minutes_day': myStats.minutes_day,
+            'minutes_week': myStats.minutes_week,
+            'minutes_month': myStats.minutes_month,
+            'average_week': myStats.average_week,
+            'total_minutes': myStats.total_minutes,
+            'user': request.user.username,
+        },
+    }
+    return JsonResponse(data, status=200)
 
 
 class RegisterScanSerializer(serializers.Serializer):
