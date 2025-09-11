@@ -4,8 +4,9 @@ from base64 import b64decode, b64encode
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.cache import cache
 from django.db.models import Avg, Sum
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
@@ -459,6 +460,12 @@ def register_scan(request):
 
 
 def sign_up(request):
+    token = request.GET.get('token')
+
+    # Check if token exists in cache
+    if not token or not cache.get(f'register_token_{token}'):
+        return HttpResponseForbidden('Invalid or expired registration link.')
+
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -466,6 +473,7 @@ def sign_up(request):
             return redirect('login')  # replace with your login URL
     else:
         form = RegistrationForm()
+
     return render(request, 'webui/sign_up.html', {'form': form})
 
 
