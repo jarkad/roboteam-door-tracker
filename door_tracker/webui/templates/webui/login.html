@@ -167,70 +167,70 @@
     </div>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const loginForm = document.getElementById("loginForm");
-        const messagesContainer = document.getElementById("messages");
-        const loginButton = document.getElementById("loginButton");
+      document.addEventListener('DOMContentLoaded', function () {
+        const loginForm = document.getElementById('loginForm')
+        const messagesContainer = document.getElementById('messages')
+        const loginButton = document.getElementById('loginButton')
 
         function showMessage(text, type) {
-          messagesContainer.style.display = "block";
-          messagesContainer.innerHTML = `<div class="${type}">${text}</div>`;
+          messagesContainer.style.display = 'block'
+          messagesContainer.innerHTML = `<div class="${type}">${text}</div>`
         }
 
-        loginForm.addEventListener("submit", async function (e) {
-          e.preventDefault();
+        loginForm.addEventListener('submit', async function (e) {
+          e.preventDefault()
 
-          const username = document.getElementById("username").value;
-          const password = document.getElementById("password").value;
+          const username = document.getElementById('username').value
+          const password = document.getElementById('password').value
 
           if (!username || !password) {
-            showMessage("Please fill in all fields", "error");
-            return;
+            showMessage('Please fill in all fields', 'error')
+            return
           }
 
-          loginButton.textContent = "Logging in...";
-          loginButton.disabled = true;
+          loginButton.textContent = 'Logging in...'
+          loginButton.disabled = true
 
           try {
-            const response = await fetch("/ui/login", {
-              method: "POST",
+            const response = await fetch('/login', {
+              method: 'POST',
               headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "X-CSRFToken": getCSRFToken(),
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCSRFToken(),
               },
               body: new URLSearchParams({
                 username: username,
                 password: password,
               }),
-            });
+            })
 
-            const data = await response.json();
+            const data = await response.json()
 
             if (response.ok) {
-              showMessage(`Welcome Comrade ${username}`, "success");
-              localStorage.setItem("username", username);
+              showMessage(`Welcome Comrade ${username}`, 'success')
+              localStorage.setItem('username', username)
               setTimeout(() => {
-                window.location.href = window.location.origin + "/ui/";
-              }, 1000);
+                window.location.href = window.location.origin
+              }, 1000)
             } else {
               showMessage(
-                data.message || "Invalid username or password",
-                "error",
-              );
-              loginButton.textContent = "Login";
-              loginButton.disabled = false;
+                data.message || 'Invalid username or password',
+                'error',
+              )
+              loginButton.textContent = 'Login'
+              loginButton.disabled = false
             }
           } catch (error) {
-            showMessage("An error occurred. Please try again.", "error");
-            loginButton.textContent = "Login";
-            loginButton.disabled = false;
+            showMessage('An error occurred. Please try again.', 'error')
+            loginButton.textContent = 'Login'
+            loginButton.disabled = false
           }
-        });
+        })
 
         function getCSRFToken() {
-          return document.querySelector("[name=csrfmiddlewaretoken]").value;
+          return document.querySelector('[name=csrfmiddlewaretoken]').value
         }
-      });
+      })
     </script>
   </body>
 </html>

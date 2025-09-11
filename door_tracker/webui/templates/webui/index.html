@@ -144,107 +144,107 @@
     </div>
     <script>
       function getUsername() {
-        return localStorage.getItem("username") || "User";
+        return localStorage.getItem('username') || 'User'
       }
 
-      document.getElementById("usernameDisplay").textContent =
-        `Welcome, ${getUsername()}`;
+      document.getElementById('usernameDisplay').textContent =
+        `Welcome, ${getUsername()}`
 
       document
-        .getElementById("logoutLink")
-        .addEventListener("click", async (event) => {
-          event.preventDefault();
+        .getElementById('logoutLink')
+        .addEventListener('click', async (event) => {
+          event.preventDefault()
           try {
-            const response = await fetch("/ui/logout", {
-              method: "POST",
+            const response = await fetch('/logout', {
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCSRFToken(),
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
               },
-            });
+            })
             if (response.ok) {
-              localStorage.removeItem("username");
-              window.location.href = "/ui/login";
+              localStorage.removeItem('username')
+              window.location.href = '/login'
             } else {
-              console.error("Logout failed");
+              console.error('Logout failed')
             }
           } catch (error) {
-            console.error("Error during logout:", error);
+            console.error('Error during logout:', error)
           }
-        });
+        })
 
       function getCSRFToken() {
-        return document.querySelector("[name=csrfmiddlewaretoken]").value;
+        return document.querySelector('[name=csrfmiddlewaretoken]').value
       }
 
       // Attach event listener for the new button
       document
-        .getElementById("testChangeStatus")
-        .addEventListener("click", async () => {
+        .getElementById('testChangeStatus')
+        .addEventListener('click', async () => {
           try {
-            const response = await fetch("/ui/change_status", {
-              method: "POST",
+            const response = await fetch('/change_status', {
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCSRFToken(),
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
               },
               body: JSON.stringify({
                 tag_id: 2,
               }),
-            });
+            })
 
-            const data = await response.json();
+            const data = await response.json()
             if (response.ok) {
               alert(
-                `✅ Success: ${data.message || "Log entry created successfully."}`,
-              );
+                `✅ Success: ${data.message || 'Log entry created successfully.'}`,
+              )
             } else {
-              alert(`❌ Error:\n${data.message || "Something went wrong."}`);
+              alert(`❌ Error:\n${data.message || 'Something went wrong.'}`)
             }
 
             // Refresh logs after success
             if (response.ok) {
-              fetchLogs();
+              fetchLogs()
             }
           } catch (error) {
-            console.error("Error creating log:", error);
-            alert("⚠️ Could not reach server. Check console for details.");
+            console.error('Error creating log:', error)
+            alert('⚠️ Could not reach server. Check console for details.')
           }
-        });
+        })
       // Fetch and display logs
       async function fetchLogs() {
         try {
-          const response = await fetch("/ui/current_user_data", {
-            method: "GET",
+          const response = await fetch('/current_user_data', {
+            method: 'GET',
             headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": getCSRFToken(),
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCSRFToken(),
             },
-          });
+          })
 
-          const data = await response.json();
-          const logList = document.getElementById("logList");
+          const data = await response.json()
+          const logList = document.getElementById('logList')
 
-          if (response.ok && data.status === "success") {
-            logList.innerHTML = ""; // Clear existing content
+          if (response.ok && data.status === 'success') {
+            logList.innerHTML = '' // Clear existing content
             if (data.logs.length === 0) {
-              logList.innerHTML = "<li>No logs available</li>";
-              return;
+              logList.innerHTML = '<li>No logs available</li>'
+              return
             }
 
             data.logs.forEach((log) => {
-              const li = document.createElement("li");
-              const date = new Date(log.time);
-              const dateString = date.toLocaleDateString("nl-NL", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              }); // Formats as DD-MM-YYYY
-              const timeString = date.toLocaleTimeString("nl-NL", {
-                hour: "2-digit",
-                minute: "2-digit",
-              }); // Formats as HH:MM
-              const action = log.type;
+              const li = document.createElement('li')
+              const date = new Date(log.time)
+              const dateString = date.toLocaleDateString('nl-NL', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              }) // Formats as DD-MM-YYYY
+              const timeString = date.toLocaleTimeString('nl-NL', {
+                hour: '2-digit',
+                minute: '2-digit',
+              }) // Formats as HH:MM
+              const action = log.type
               li.innerHTML = `
               ${log.tag} - ${action} at ${dateString} ${timeString}
               <div class="details">
@@ -252,32 +252,32 @@
                 User ID: ${log.user_id}<br>
                 Status: ${log.type}
               </div>
-            `;
-              logList.appendChild(li);
-              li.addEventListener("click", () => {
-                li.classList.toggle("active");
-              });
-            });
+            `
+              logList.appendChild(li)
+              li.addEventListener('click', () => {
+                li.classList.toggle('active')
+              })
+            })
           } else {
-            showMessage(data.message || "Failed to load logs.", "error");
+            showMessage(data.message || 'Failed to load logs.', 'error')
           }
         } catch (error) {
-          console.error("Error fetching logs:", error);
-          showMessage("Could not fetch data. Please try again.", "error");
+          console.error('Error fetching logs:', error)
+          showMessage('Could not fetch data. Please try again.', 'error')
         }
       }
 
       // Fetch logs on page load
-      document.addEventListener("DOMContentLoaded", fetchLogs);
+      document.addEventListener('DOMContentLoaded', fetchLogs)
 
-      document.getElementById("statisticsBtn").addEventListener("click", () => {
+      document.getElementById('statisticsBtn').addEventListener('click', () => {
         // simply redirect to the Django URL for user_statistics
-        window.location.href = "/ui/user_statistics";
-      });
-      document.getElementById("profileBtn").addEventListener("click", () => {
+        window.location.href = '/user_statistics'
+      })
+      document.getElementById('profileBtn').addEventListener('click', () => {
         // simply redirect to the Django URL for user_statistics
-        window.location.href = "/ui/user_profile";
-      });
+        window.location.href = '/user_profile'
+      })
     </script>
   </body>
 </html>

@@ -22,6 +22,6 @@ from webui import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('ui/', include('webui.urls')),
+    path('', include('webui.urls')),
     path('register_scan/', views.register_scan, name='register_scan'),
 ]
