@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Checked-In Metrics</title>
+    <style>
+      /* Basic reset */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: #f3f3f3;
+        color: #333;
+      }
+
+      /* Header bar */
+      .header {
+        background: #4b2675; /* deep purple */
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+      }
+
+      .logo {
+        font-weight: bold;
+      }
+      .logo span {
+        font-weight: normal;
+      }
+
+      .header-title {
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+      }
+
+      .user-area a {
+        color: #fff;
+        text-decoration: underline;
+        margin-left: 6px;
+        font-size: 0.9rem;
+      }
+
+      /* Content */
+      .content {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 0 20px;
+        text-align: center;
+      }
+
+      .role-title {
+        font-size: 2.2rem;
+        font-weight: bold;
+        margin-bottom: 30px;
+        color: #4b2675;
+      }
+
+      /* Metrics card */
+      .metrics-card {
+        background: #fff;
+        border-radius: 6px;
+        padding: 20px;
+        width: 260px;
+        margin: 0 auto 30px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .metric {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
+        font-size: 1rem;
+      }
+
+      .metric:last-child {
+        border-bottom: none;
+      }
+
+      .value {
+        font-weight: bold;
+        color: #4b2675;
+      }
+
+      /* Back button */
+      .back-btn button {
+        background: #4b2675;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .back-btn button:hover {
+        background: #3a1f5e;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top bar -->
+    <header class="header">
+      <div class="logo">RoboTeam <span>Twente</span></div>
+      <div class="header-title">CHECKED-IN</div>
+      <div class="user-area">User (or user name) <a href="#">Log out</a></div>
+    </header>
+
+    <!-- Main content -->
+    <main class="content">
+      <h1 class="role-title">Full-Timer</h1>
+
+      <section class="metrics-card">
+        <div class="metric">
+          <span>Today:</span> <span class="value">0</span>
+        </div>
+        <div class="metric">
+          <span>This Week:</span> <span class="value">0</span>
+        </div>
+        <div class="metric">
+          <span>This Month:</span> <span class="value">0</span>
+        </div>
+        <div class="metric">
+          <span>Total:</span> <span class="value">0</span>
+        </div>
+        <div class="metric">
+          <span>Average:</span> <span class="value">0</span>
+        </div>
+        <div class="metric">
+          <span>Weekly Quota:</span>
+          <span class="value">&lt;MET/UNMET&gt;</span>
+        </div>
+        <div class="metric">
+          <span>Monthly Quota:</span>
+          <span class="value">&lt;MET/UNMET&gt;</span>
+        </div>
+      </section>
+
+      <div class="back-btn">
+        <button>Back</button>
+      </div>
+    </main>
+  </body>
+</html>

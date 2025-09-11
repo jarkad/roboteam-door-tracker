@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -36,8 +37,26 @@ in
     django createsuperuser "$@"
   '';
 
+  scripts.repl.exec = ''
+    django shell "$@"
+  '';
+
   scripts.docker-login.exec = ''
-    skopeo login docker.io
+    skopeo login docker.io -u roboteamtwente "$@"
+  '';
+
+  scripts.build-container.exec = ''
+    set -eux
+    name=$1
+    shift
+    $(devenv build outputs.containers."$name".copyToDockerDaemon)/bin/copy-to-docker-daemon "$@"
+  '';
+
+  scripts.upload-container.exec = ''
+    set -eux
+    name=$1
+    shift
+    $(devenv build outputs.containers."$name".copyToRegistry)/bin/copy-to-registry "$@"
   '';
 
   ## Languages
@@ -56,7 +75,9 @@ in
   ## Devcontainer
 
   packages = [
+    pkgs.curl
     pkgs.git
+    pkgs.httpie
     pkgs.openssh
     pkgs.skopeo
   ];
@@ -70,60 +91,70 @@ in
 
   ## Packages
 
-  outputs.admin = pkgs.writeShellApplication {
-    name = "admin";
-    runtimeInputs = [ venv ];
-    text = ''
-      DJANGO_SETTINGS_MODULE=door_tracker.settings django-admin "$@"
-    '';
-  };
+  outputs.packages = {
+    admin = pkgs.writeShellApplication {
+      name = "admin";
+      runtimeInputs = [ venv ];
+      text = ''
+        DJANGO_SETTINGS_MODULE=door_tracker.settings django-admin "$@"
+      '';
+    };
 
-  outputs.static = pkgs.stdenv.mkDerivation {
-    name = "static";
-    src = ./door_tracker;
+    static = pkgs.stdenv.mkDerivation {
+      name = "static";
+      src = ./door_tracker;
 
-    dontConfigure = true;
-    dontBuild = true;
+      dontConfigure = true;
+      dontBuild = true;
 
-    nativeBuildInputs = [ config.outputs.admin ];
+      nativeBuildInputs = [ config.outputs.packages.admin ];
 
-    installPhase = ''
-      DJANGO_STATIC_ROOT=$out admin collectstatic --no-input
-    '';
-  };
+      installPhase = ''
+        DJANGO_STATIC_ROOT=$out admin collectstatic --no-input
+      '';
+    };
 
-  outputs.serve = pkgs.writeShellApplication {
-    name = "serve";
-    runtimeInputs = [
-      config.outputs.admin
-      venv
-    ];
-    runtimeEnv.DJANGO_STATIC_ROOT = config.outputs.static;
-    text = ''
-      admin migrate
-      daphne -b 0.0.0.0 door_tracker.asgi:application
-    '';
-  };
+    serve = pkgs.writeShellApplication {
+      name = "serve";
+      runtimeInputs = [
+        config.outputs.packages.admin
+        venv
+      ];
+      runtimeEnv.DJANGO_STATIC_ROOT = config.outputs.packages.static;
+      text = ''
+        admin migrate
+        daphne -b 0.0.0.0 door_tracker.asgi:application
+      '';
+    };
 
-  outputs.init = pkgs.writeShellApplication {
-    name = "init";
-    runtimeInputs = [ config.outputs.admin ];
-    text = ''
-      admin migrate
-      admin createsuperuser
-    '';
+    init = pkgs.writeShellApplication {
+      name = "init";
+      runtimeInputs = [ config.outputs.packages.admin ];
+      text = ''
+        admin migrate
+        admin createsuperuser
+      '';
+    };
   };
 
   ## Containers
 
-  containers.serve = {
-    name = "rfid-tracker-serve";
-    startupCommand = lib.getExe config.outputs.serve;
-    copyToRoot = [
-      config.outputs.admin
-      config.outputs.init
-    ];
-    maxLayers = 42;
+  outputs.containers = {
+    serve = inputs.nix2container.packages.${pkgs.system}.nix2container.buildImage {
+      name = "roboteamtwente/rfid-tracker-serve";
+      tag = "latest";
+      maxLayers = 125;
+      copyToRoot = [
+        config.outputs.packages.admin
+        config.outputs.packages.init
+        config.outputs.packages.serve
+        pkgs.tini
+      ];
+      config.Cmd = [
+        "/bin/tini"
+        "/bin/serve"
+      ];
+    };
   };
 
   ## Config files
@@ -145,34 +176,50 @@ in
     version = "2.0.0";
     tasks =
       # scripts
-      lib.mapAttrsToList (
-        name: _:
+      lib.mapAttrsToList
+        (
+          name: _:
+          {
+            label = "run script: ${name}";
+            type = "shell";
+            command = name;
+            group = "build";
+          }
+          // lib.optionalAttrs (name == "dev") {
+            group.kind = "build";
+            group.isDefault = name == "dev";
+            runOptions.runOn = "folderOpen";
+          }
+        )
+        (
+          lib.removeAttrs config.scripts [
+            "build-container"
+            "django"
+            "upload-container"
+          ]
+        )
+      # containers
+      ++ lib.concatMap (name: [
         {
-          label = "script: ${name}";
+          label = "build container: ${name}";
           type = "shell";
-          command = name;
+          command = "$(devenv build outputs.containers.${lib.escapeShellArg name}.copyToDockerDaemon)/bin/copy-to-docker-daemon";
           group = "build";
         }
-        // lib.optionalAttrs (name == "dev") {
-          group.kind = "build";
-          group.isDefault = name == "dev";
-          runOptions.runOn = "folderOpen";
+        {
+          label = "upload container: ${name}";
+          type = "shell";
+          command = "$(devenv build outputs.containers.${lib.escapeShellArg name}.copyToRegistry)/bin/copy-to-registry";
+          group = "build";
         }
-      ) (lib.removeAttrs config.scripts [ "django" ])
-      # containers
+      ]) (lib.attrNames config.outputs.containers)
+      # packages
       ++ lib.mapAttrsToList (name: _: {
-        label = "container: ${name}";
+        label = "build package: ${name}";
         type = "shell";
-        command = "devenv container --registry docker://docker.io/roboteamtwente/ copy ${lib.escapeShellArg name}";
+        command = "devenv build outputs.packages.${lib.escapeShellArg name}";
         group = "build";
-      }) config.containers
-      # outputs
-      ++ lib.mapAttrsToList (name: _: {
-        label = "package: ${name}";
-        type = "shell";
-        command = "devenv build outputs.${lib.escapeShellArg name}";
-        group = "build";
-      }) config.outputs;
+      }) config.outputs.packages;
   };
 
   ## Git hooks
