@@ -269,6 +269,15 @@
 
       // Fetch logs on page load
       document.addEventListener("DOMContentLoaded", fetchLogs);
+
+      document.getElementById("statisticsBtn").addEventListener("click", () => {
+        // simply redirect to the Django URL for user_statistics
+        window.location.href = "/ui/user_statistics";
+      });
+      document.getElementById("profileBtn").addEventListener("click", () => {
+        // simply redirect to the Django URL for user_statistics
+        window.location.href = "/ui/user_profile";
+      });
     </script>
   </body>
 </html>

@@ -124,6 +124,30 @@
       .add-btn:hover {
         background: #3a1f5e;
       }
+      .back-wrapper {
+        max-width: 1000px;
+        margin: 20px auto 0; /* center horizontally, add space below header */
+        padding: 0 20px;
+      }
+
+      .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #4b2675;
+        color: #fff;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: background 0.2s ease;
+      }
+
+      .back-btn:hover {
+        background: #3a1f5e;
+      }
     </style>
   </head>
   <body>
@@ -133,6 +157,12 @@
       <div class="header-title">CHECKED-IN</div>
       <div class="user-area">User (or user name) <a href="#">Log out</a></div>
     </header>
+
+    <div class="back-wrapper">
+      <a href="/ui/" class="back-btn" , id="backBtn">
+        <i class="fa fa-arrow-left"></i> Back
+      </a>
+    </div>
 
     <!-- Main content -->
     <main class="container">

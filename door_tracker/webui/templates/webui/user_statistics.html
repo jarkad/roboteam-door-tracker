@@ -143,9 +143,16 @@
         </div>
       </section>
 
-      <div class="back-btn">
+      <div class="back-btn" , id="backBtn">
         <button>Back</button>
       </div>
     </main>
+
+    <script>
+      document.getElementById("backBtn").addEventListener("click", () => {
+        // simply redirect to the Django URL for user_statistics
+        window.location.href = "/ui";
+      });
+    </script>
   </body>
 </html>
