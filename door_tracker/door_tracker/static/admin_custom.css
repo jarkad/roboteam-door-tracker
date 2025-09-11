@@ -1,0 +1,38 @@
+body,
+.module {
+  background-color: #ffffff !important;
+  color: #461561 !important;
+}
+
+#header,
+.nav-global {
+  background-color: #5a1c74 !important;
+  color: #ffffff !important;
+}
+
+#header #branding {
+  background-color: #6d2197 !important;
+  color: #ffffff !important;
+}
+
+input[type="submit"],
+.button,
+.submit-row input {
+  background-color: #8027b0 !important;
+  color: #ffffff !important;
+  border: none;
+}
+
+a,
+.module h2 {
+  color: #5a1c74 !important;
+}
+
+a:hover {
+  color: #8027b0 !important;
+}
+
+table th {
+  background-color: #461561 !important;
+  color: #ffffff !important;
+}
