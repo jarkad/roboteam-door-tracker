@@ -17,7 +17,15 @@ from . import utils  # -> Helper functions
 from .forms import RegistrationForm
 
 # Create your views here.
-from .models import Log, Scanner, Statistics, Tag, TagState, is_checked_in
+from .models import (
+    Log,
+    Membership,
+    Scanner,
+    Statistics,
+    Tag,
+    TagState,
+    is_checked_in,
+)
 
 
 def index(request):
@@ -346,6 +354,19 @@ def get_statistics(request):
             {'status': 'error', 'message': 'No statistics found'}, status=404
         )
 
+    myMembership = Membership.objects.filter(person=request.user).first()
+    if not myMembership or not myMembership.job:
+        return JsonResponse(
+            {'status': 'error', 'message': 'No membership/job found'}, status=404
+        )
+
+    weeklyQuota = myMembership.job.quota * 60
+    monthlyQuota = weeklyQuota * 4
+    print(weeklyQuota)
+
+    flagWeeklyQuota = myStats.minutes_week >= weeklyQuota
+    flagMonthlyQuota = myStats.minutes_month >= monthlyQuota
+
     data = {
         'status': 'success',
         'stats': {
@@ -355,7 +376,8 @@ def get_statistics(request):
             'minutes_month': myStats.minutes_month,
             'average_week': myStats.average_week,
             'total_minutes': myStats.total_minutes,
-            'user': request.user.username,
+            'quotaWeekly': flagWeeklyQuota,
+            'quotaMonthly': flagMonthlyQuota,
         },
     }
     return JsonResponse(data, status=200)

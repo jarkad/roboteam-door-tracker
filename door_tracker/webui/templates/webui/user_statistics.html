@@ -162,6 +162,37 @@
         return document.querySelector("[name=csrfmiddlewaretoken]").value;
       }
 
+      function convertNumToTime(number) {
+        // Check sign of given number
+        var sign = number >= 0 ? 1 : -1;
+
+        // Set positive value of number of sign negative
+        number = number * sign;
+
+        // Separate the int from the decimal part
+        var hour = Math.floor(number);
+        var decpart = number - hour;
+
+        var min = 1 / 60;
+        // Round to nearest minute
+        decpart = min * Math.round(decpart / min);
+
+        var minute = Math.floor(decpart * 60) + "";
+
+        // Add padding if need
+        if (minute.length < 2) {
+          minute = "0" + minute;
+        }
+
+        // Add Sign in final result
+        sign = sign == 1 ? "" : "-";
+
+        // Return concated hours and minutes
+        return sign + hour + "h " + minute + "m";
+      }
+
+      console.log(convertNumToTime(11.15));
+
       async function fetchStats() {
         try {
           const response = await fetch("/ui/get_statistics", {
@@ -172,6 +203,8 @@
             },
           });
 
+          alert("YAAAAAAASSSS");
+
           if (!response.ok) {
             throw new Error(`Server error: ${response.status}`);
           }
@@ -180,24 +213,44 @@
           // data now contains minutes_day, minutes_week, etc.
 
           // Populate DOM elements
-          document.getElementById("hoursToday").textContent =
-            (data.stats.minutes_day / 60).toFixed(1) + " h";
+          document.getElementById("hoursToday").textContent = convertNumToTime(
+            data.stats.minutes_day / 60,
+          );
           document.getElementById("hoursThisWeek").textContent =
-            (data.stats.minutes_week / 60).toFixed(1) + " h";
+            convertNumToTime(data.stats.minutes_week / 60);
           document.getElementById("hoursThisMonth").textContent =
-            (data.stats.minutes_month / 60).toFixed(1) + " h";
-          document.getElementById("hoursTotal").textContent =
-            (data.stats.total_minutes / 60).toFixed(1) + " h";
+            convertNumToTime(data.stats.minutes_month / 60);
+          document.getElementById("hoursTotal").textContent = convertNumToTime(
+            data.stats.total_minutes / 60,
+          );
           document.getElementById("hoursAverage").textContent =
-            (data.stats.average_week / 60).toFixed(1) + " h";
+            convertNumToTime(data.stats.average_week / 60);
 
-          // // Example quota checks (adjust the thresholds as you wish)
-          // const weeklyQuotaMet = data.minutes_week >= 2400; // 40h * 60
-          // const monthlyQuotaMet = data.minutes_month >= 9600; // 160h * 60
-          // document.getElementById("quotaWeekly").textContent =
-          //   weeklyQuotaMet ? "MET" : "UNMET";
-          // document.getElementById("quotaMonthly").textContent =
-          //   monthlyQuotaMet ? "MET" : "UNMET";
+          dataQuotaWeekly = data.stats.quotaWeekly;
+          dataQuotaMonthly = data.stats.quotaMonthly;
+
+          if (dataQuotaWeekly == true) {
+            document.getElementById("quotaWeekly").textContent = "MET";
+          } else {
+            document.getElementById("quotaWeekly").textContent = "UNMET";
+          }
+
+          if (dataQuotaMonthly == true) {
+            document.getElementById("quotaMonthly").textContent = "MET";
+          } else {
+            document.getElementById("quotaMonthly").textContent = "UNMET";
+          }
+          v;
+
+          // Example quota checks (adjust the thresholds as you wish)
+          const weeklyQuotaMet = data.minutes_week >= 2400; // 40h * 60
+          const monthlyQuotaMet = data.minutes_month >= 9600; // 160h * 60
+          document.getElementById("quotaWeekly").textContent = weeklyQuotaMet
+            ? "MET"
+            : "UNMET";
+          document.getElementById("quotaMonthly").textContent = monthlyQuotaMet
+            ? "MET"
+            : "UNMET";
         } catch (err) {
           console.error("Error fetching statistics:", err);
         }
