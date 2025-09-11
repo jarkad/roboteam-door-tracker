@@ -10,7 +10,9 @@
         "ms-python.python",
         "tamasfe.even-better-toml",
         "ms-python.isort",
-        "redhat.vscode-yaml"
+        "42crunch.vscode-openapi",
+        "redhat.vscode-yaml",
+        "charliermarsh.ruff"
       ],
       "settings": {
         "direnv.restart.automatic": true,

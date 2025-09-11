@@ -10,6 +10,7 @@ dependencies = [
   "dj-database-url>=3.0.1",
   "whitenoise[brotli]>=6.9.0",
   "django-dbbackup>=5.0.0",
+  "django-organizations>=2.5.0",
 ]
 
 [dependency-groups]
@@ -17,6 +18,9 @@ dev = ["python-lsp-server[all]>=1.13.1"]
 
 [tool.setuptools.packages.find]
 include = ["*"]
+
+[tool.setuptools.package-data]
+"webui.templates.webui" = ["*"]
 
 [tool.ruff.lint]
 extend-select = ["I"]

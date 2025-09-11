@@ -254,6 +254,31 @@ wheels = [
 ]
 
 [[package]]
+name = "django-extensions"
+version = "4.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6d/b3/ed0f54ed706ec0b54fd251cc0364a249c6cd6c6ec97f04dc34be5e929eac/django_extensions-4.1.tar.gz", hash = "sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb", size = 283078, upload-time = "2025-04-11T01:15:39.617Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/64/96/d967ca440d6a8e3861120f51985d8e5aec79b9a8bdda16041206adfe7adc/django_extensions-4.1-py3-none-any.whl", hash = "sha256:0699a7af28f2523bf8db309a80278519362cd4b6e1fd0a8cd4bf063e1e023336", size = 232980, upload-time = "2025-04-11T01:15:37.701Z" },
+]
+
+[[package]]
+name = "django-organizations"
+version = "2.5.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "django-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e7/bc/f920d2c12f85824da8014254c3351dbbbd1f248322f4198f04eeb489edb0/django_organizations-2.5.0.tar.gz", hash = "sha256:8cc8cd617dabf68e9118f4f5c7c2dddf89549e18f5696f70a419da3ccecfc17f", size = 75645, upload-time = "2024-10-28T18:54:11.995Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/97/05/e3d2adc72f449af2187d8d2070eb7a5ddc9e0bfb8c2ab7c9473439338c5e/django_organizations-2.5.0-py3-none-any.whl", hash = "sha256:bb07e31a34a3c973e736499c3386f6d62f8af3128c182073a7fc6063b4700427", size = 55036, upload-time = "2024-10-28T18:54:13.382Z" },
+]
+
+[[package]]
 name = "docstring-to-markdown"
 version = "0.17"
 source = { registry = "https://pypi.org/simple" }
@@ -568,6 +593,7 @@ dependencies = [
     { name = "dj-database-url" },
     { name = "django" },
     { name = "django-dbbackup" },
+    { name = "django-organizations" },
     { name = "whitenoise", extra = ["brotli"] },
 ]
 
@@ -582,6 +608,7 @@ requires-dist = [
     { name = "dj-database-url", specifier = ">=3.0.1" },
     { name = "django", specifier = ">=5.2.5" },
     { name = "django-dbbackup", specifier = ">=5.0.0" },
+    { name = "django-organizations", specifier = ">=2.5.0" },
     { name = "whitenoise", extras = ["brotli"], specifier = ">=6.9.0" },
 ]
 

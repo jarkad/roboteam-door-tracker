@@ -1,29 +1,27 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import messages
-from django.http import JsonResponse
-from django.utils import timezone
-from django.db.models import Sum
 import json
 import time
-from django.views.decorators.csrf import ensure_csrf_cookie
 
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.db.models import Avg, Sum
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.utils import timezone
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 # Import Custom Files
 from . import utils  # -> Helper functions
 
 # Create your views here.
-from .models import Log, Tag, Statistics
+from .models import Log, Statistics, Tag
 
 
 def index(request):
     # Greetings from the Ancient One
     if not request.user.is_authenticated:
         return redirect('login')
-    return render(
-        request, 'webui/index.html', {'username': request.user.username}
-    )
+    return render(request, 'webui/index.html', {'username': request.user.username})
 
 
 @ensure_csrf_cookie
@@ -164,9 +162,7 @@ def current_user_data(request):
             'type': log.get_type_display(),
             'time': log.time.isoformat(),
             'tag': str(log.tag),
-            'user_id': log.tag.owner_id
-            if (log.tag and log.tag.owner_id)
-            else None,
+            'user_id': log.tag.owner_id if (log.tag and log.tag.owner_id) else None,
         }
         for log in logs
     ]
@@ -175,9 +171,7 @@ def current_user_data(request):
 
 
 def minutes_today(request):
-    today = (
-        timezone.localdate()
-    )  # gets the current date in the current timezone
+    today = timezone.localdate()  # gets the current date in the current timezone
     now = timezone.localtime()
     minutes_worked = 0
 
@@ -199,9 +193,7 @@ def minutes_today(request):
             first_log = False
         elif log.type == Log.LogEntryType.CHECKOUT:
             if checkin_time and not first_log:
-                delta = timezone.localtime(log.time) - timezone.localtime(
-                    checkin_time
-                )
+                delta = timezone.localtime(log.time) - timezone.localtime(checkin_time)
                 minutes_worked += int(delta.total_seconds() // 60)
                 checkin_time = None
             elif first_log:
@@ -263,21 +255,38 @@ def save_statistics(request):
     # Get today's date (without time) to filter existing statistics
     today_date = now.date()
 
-    # Calculate minutes
     minutes_today_val = minutes_today(request)
-    minutes_week_val = minutes_week(request)
-    minutes_month_val = minutes_month(request)
 
-    # Check if a Statistics object exists for today
     stats, created = Statistics.objects.update_or_create(
         person=request.user,
         date__date=today_date,  # filter by date portion only
         defaults={
             'minutes_day': minutes_today_val,
-            'minutes_week': minutes_week_val,
-            'minutes_month': minutes_month_val,
-            'date': now,  # update the datetime to current time
+            'date': now,
         },
+    )
+
+    minutes_week_val = minutes_week(request)
+    minutes_month_val = minutes_month(request)
+
+    # Update only the week/month fields
+    stats.minutes_week = minutes_week_val
+    stats.minutes_month = minutes_month_val
+
+    # Calculate avg and total
+    agg = Statistics.objects.filter(person=request.user).aggregate(
+        average_week=Avg('minutes_week'),
+        total_minutes=Sum('minutes_day'),
+    )
+
+    average_week = agg['average_week'] or 0
+    total_minutes = agg['total_minutes'] or 0
+
+    stats.average_week = average_week
+    stats.total_minutes = total_minutes
+
+    stats.save(
+        update_fields=['minutes_week', 'minutes_month', 'average_week', 'total_minutes']
     )
 
     return JsonResponse(
@@ -285,6 +294,8 @@ def save_statistics(request):
             'minutes_day': minutes_today_val,
             'minutes_week': minutes_week_val,
             'minutes_month': minutes_month_val,
+            'average_minutes': average_week,
+            'total_minutes': total_minutes,
             'date': stats.date,
             'created': created,
         },
@@ -314,11 +325,7 @@ def register_scan(request):
 
     # 1) Try as integer primary key
     if raw_card_str.isdigit():
-        tag = (
-            Tag.objects.select_related('owner')
-            .filter(id=int(raw_card_str))
-            .first()
-        )
+        tag = Tag.objects.select_related('owner').filter(id=int(raw_card_str)).first()
 
     # 2) Try as name (case-insensitive), including a normalized version (strip colons/spaces)
     if tag is None:
@@ -341,11 +348,7 @@ def register_scan(request):
             )
             if hex_str:
                 tag_bytes = bytes.fromhex(hex_str)
-                tag = (
-                    Tag.objects.select_related('owner')
-                    .filter(tag=tag_bytes)
-                    .first()
-                )
+                tag = Tag.objects.select_related('owner').filter(tag=tag_bytes).first()
         except ValueError:
             # Not valid hex — ignore
             pass
