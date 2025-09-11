@@ -12,6 +12,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 # Import Custom Files
 from . import utils  # -> Helper functions
+from .forms import RegistrationForm
 
 # Create your views here.
 from .models import Log, Statistics, Tag
@@ -378,3 +379,14 @@ def register_scan(request):
     }
 
     return JsonResponse(data, status=200)
+
+
+def sign_up(request):
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # replace with your login URL
+    else:
+        form = RegistrationForm()
+    return render(request, 'webui/sign_up.html', {'form': form})
