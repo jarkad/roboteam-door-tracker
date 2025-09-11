@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>User Profile</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Optional: include an icon library for the edit/delete icons -->
+    <style>
+      /* Reset and basics */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: #f3f3f3;
+        color: #333;
+      }
+
+      /* Header */
+      .header {
+        background: #4b2675;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+      }
+
+      .logo {
+        font-weight: bold;
+      }
+      .logo span {
+        font-weight: normal;
+      }
+
+      .header-title {
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+      }
+
+      .user-area a {
+        color: #fff;
+        text-decoration: underline;
+        margin-left: 6px;
+        font-size: 0.9rem;
+      }
+
+      /* Layout */
+      .container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+      }
+
+      /* Cards */
+      .card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Left card: user info */
+      .user-info {
+        flex: 1 1 260px;
+        line-height: 1.8;
+      }
+
+      /* Right card: tag table */
+      .tag-table {
+        flex: 2 1 400px;
+      }
+
+      .tag-table table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      .tag-table th,
+      .tag-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #4b2675;
+        font-size: 1.1rem;
+      }
+
+      /* Add button */
+      .add-btn {
+        background: #4b2675;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 1rem;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .add-btn:hover {
+        background: #3a1f5e;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Top header -->
+    <header class="header">
+      <div class="logo">RoboTeam <span>Twente</span></div>
+      <div class="header-title">CHECKED-IN</div>
+      <div class="user-area">User (or user name) <a href="#">Log out</a></div>
+    </header>
+
+    <!-- Main content -->
+    <main class="container">
+      <section class="card user-info">
+        <p><strong>Name:</strong> User</p>
+        <p><strong>Email:</strong> user@email.com</p>
+        <p><strong>Username:</strong> username</p>
+        <p><strong>Workload:</strong> Full-time</p>
+        <p><strong>Subteam:</strong> &lt;List&gt;</p>
+      </section>
+
+      <section class="card tag-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Tag ID</th>
+              <th>Tag Name</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1234...</td>
+              <td>MyTag</td>
+              <td class="actions">
+                <button class="icon-btn"><i class="fa fa-pen"></i></button>
+                <button class="icon-btn"><i class="fa fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button class="add-btn">+ Add a Tag</button>
+      </section>
+    </main>
+  </body>
+</html>
