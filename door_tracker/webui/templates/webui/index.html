@@ -132,17 +132,16 @@
     <div class="toolbar">
       <button id="remoteCheckout">Remote Checkout</button>
       <button id="testChangeStatus">Test Change Status</button>
-      <!-- New Button -->
+      <!-- New Buttons -->
+      <button id="statisticsBtn">Statistics</button>
+      <button id="profileBtn">Profile</button>
     </div>
 
-    <!-- Welcome Message -->
     <!-- Database Viewer -->
     <div class="data-viewer">
       <h3>Database Entries</h3>
       <ul id="logList"></ul>
-      <!-- Empty <ul> to be populated dynamically -->
     </div>
-
     <script>
       function getUsername() {
         return localStorage.getItem("username") || "User";

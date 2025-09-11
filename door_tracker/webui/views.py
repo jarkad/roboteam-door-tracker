@@ -378,3 +378,11 @@ def register_scan(request):
     }
 
     return JsonResponse(data, status=200)
+
+
+def user_statistics(request):
+    return render(request, 'webui/user_statistics.html')
+
+
+def user_profile(request):
+    return render(request, 'webui/user_profile.html')
