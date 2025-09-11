@@ -1,7 +1,7 @@
-{% extends "admin/base_site.html" %} {% load i18n static %} {% block coltype
-%}colM{% endblock %} {% block bodyclass %}{{ block.super }} dashboard{% endblock
-%} {% block nav-breadcrumbs %}{% endblock %} {% block nav-sidebar %}{% endblock
-%} {% block content %}
+{% extends "admin/base_site.html" %} {% load i18n static log %} {% block coltype
+%} colM {% endblock %} {% block bodyclass %} {{ block.super }} dashboard {%
+endblock %} {% block nav-breadcrumbs %} {% endblock %} {% block nav-sidebar %}
+{% endblock %} {% block content %}
 <div id="content-main">
   <!-- Admin Actions Module -->
   <div class="module" style="margin-bottom: 20px">
@@ -23,8 +23,7 @@
   <div class="module" id="recent-actions-module">
     <h2>{% translate 'Recent actions' %}</h2>
     <h3>{% translate 'My actions' %}</h3>
-    {% load log %} {% get_admin_log 10 as admin_log for_user user %} {% if not
-    admin_log %}
+    {% get_admin_log 10 as admin_log for_user user %} {% if not admin_log %}
     <p>{% translate 'None available' %}</p>
     {% else %}
     <ul class="actionlist">
