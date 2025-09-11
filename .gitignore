@@ -16,7 +16,7 @@ __pycache__
 door_tracker/db.sqlite3
 
 # misc specific files
+/docs/schema.png
+/docs/schema.svg
 /ruff.toml
-/schema.png
-/schema.svg
 /.vscode/tasks.json
