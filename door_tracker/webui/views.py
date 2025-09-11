@@ -1,10 +1,11 @@
+import csv
 from base64 import b64decode, b64encode
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Avg, Sum
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
@@ -452,3 +453,29 @@ def user_statistics(request):
 
 def user_profile(request):
     return render(request, 'webui/user_profile.html')
+
+
+class ExportSerializer(serializers.Serializer):
+    ids = serializers.ListField(child=serializers.IntegerField())
+
+
+@api_view(['GET'])
+def export(request):
+    serializer = ExportSerializer(data=request.query_params)
+    serializer.is_valid(raise_exception=True)
+    ids = serializer.validated_data['ids']
+    qs = Log.objects.filter(pk__in=ids)
+    response = HttpResponse(content_type='text/csv')
+    writer = csv.writer(response, dialect='excel')
+    writer.writerow(['time', 'type', 'tag', 'owner_first', 'owner_last', 'scanner'])
+    writer.writerows(
+        qs.values_list(
+            'time',
+            'type',
+            'tag__name',
+            'tag__owner__first_name',
+            'tag__owner__last_name',
+            'scanner__name',
+        )
+    )
+    return response

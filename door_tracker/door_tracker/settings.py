@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'webui.apps.WebuiConfig',
     'dbbackup',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

@@ -3,8 +3,8 @@ import secrets
 
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.http import HttpResponse
-from django.urls import path
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import path, reverse
 
 from .models import Job, Log, Membership, Scanner, SubTeam, Tag
 
@@ -38,8 +38,15 @@ class LogPersonListFilter(admin.SimpleListFilter):
         return queryset.filter(tag__owner=self.value())
 
 
+def export_selected_logs(modeladmin, request, queryset):
+    ids = queryset.values_list('pk', flat=True)
+    url = reverse('export', query={'ids': ids})
+    return HttpResponseRedirect(url)
+
+
 @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
+    actions = [export_selected_logs]
     list_display = ('time', 'type', 'person', 'scanner')
     list_filter = (LogSubteamListFilter, LogPersonListFilter)
     ordering = ('-time',)

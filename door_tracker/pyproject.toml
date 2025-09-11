@@ -12,6 +12,7 @@ dependencies = [
   "djangorestframework>=3.16.1",
   "dj-database-url>=3.0.1",
   "whitenoise[brotli]>=6.9.0",
+  "djangorestframework-csv>=3.0.2",
 ]
 
 [dependency-groups]
