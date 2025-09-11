@@ -2,14 +2,102 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Sign Up</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RoboTeam Twente Sign Up</title>
+    <style>
+      /* Background gradient and body setup */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #6a5ce8, #3b00b5);
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        /* ensures space on very small screens */
+        overflow-y: auto;
+        /* allows scrolling if content is taller than viewport */
+        box-sizing: border-box;
+      }
+
+      /* Form container */
+      .signup-container {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        width: 350px;
+        max-width: 100%;
+        /* ensures card shrinks on very small screens */
+        text-align: center;
+      }
+
+      /* Circle logo */
+      .logo-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #3b00b5;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 20px auto;
+        font-weight: bold;
+        font-size: 24px;
+      }
+
+      h2 {
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      /* Input fields */
+      input[type="text"],
+      input[type="password"],
+      input[type="email"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+
+      /* Button */
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #3b00b5;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #6a5ce8;
+      }
+    </style>
   </head>
 
   <body>
-    <h2>Sign Up</h2>
-    <form method="post">
-      {% csrf_token %} {{ form.as_p }}
-      <button type="submit">Register</button>
-    </form>
+    <div class="signup-container">
+      <div class="logo-circle">RT</div>
+      <h2>RoboTeam Twente Sign Up</h2>
+      <form method="post">
+        {% csrf_token %} {{ form.as_p }}
+        <button type="submit">Register</button>
+      </form>
+    </div>
   </body>
 </html>
