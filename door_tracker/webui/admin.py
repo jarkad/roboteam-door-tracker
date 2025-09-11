@@ -1,7 +1,14 @@
+# admin.py
+import secrets
+
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.urls import path
 
 from .models import Job, Log, Membership, Scanner, SubTeam, Tag
+
+admin.site.site_header = 'RoboTeam'
 
 
 class LogSubteamListFilter(admin.SimpleListFilter):
@@ -80,4 +87,30 @@ def get_app_list(self, request, app_label=None):
     return list(self._build_app_dict(request, app_label).values())
 
 
+def generate_register_link(request):
+    token = secrets.token_urlsafe(16)
+    link = f'http://127.0.0.1:8000/ui/sign_up?token={token}'
+    return HttpResponse(
+        f"Your register link: <a href='{link}' target='_blank'>{link}</a>"
+    )
+
+
+# admin.py (at the bottom)
+def get_urls(original_get_urls):
+    def custom_get_urls(self):
+        urls = original_get_urls(self)
+        custom_urls = [
+            path(
+                'generate-register-link/',
+                self.admin_view(generate_register_link),
+                name='generate_register_link',
+            ),
+        ]
+        return custom_urls + urls
+
+    return custom_get_urls
+
+
 admin.AdminSite.get_app_list = get_app_list
+
+admin.AdminSite.get_urls = get_urls(admin.AdminSite.get_urls)
