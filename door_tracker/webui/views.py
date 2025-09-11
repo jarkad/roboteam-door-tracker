@@ -4,7 +4,7 @@ import time
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.db.models import Sum
+from django.db.models import Avg, Sum
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -272,13 +272,30 @@ def save_statistics(request):
     # Update only the week/month fields
     stats.minutes_week = minutes_week_val
     stats.minutes_month = minutes_month_val
-    stats.save(update_fields=['minutes_week', 'minutes_month'])
+
+    # Calculate avg and total
+    agg = Statistics.objects.filter(person=request.user).aggregate(
+        average_week=Avg('minutes_week'),
+        total_minutes=Sum('minutes_day'),
+    )
+
+    average_week = agg['average_week'] or 0
+    total_minutes = agg['total_minutes'] or 0
+
+    stats.average_week = average_week
+    stats.total_minutes = total_minutes
+
+    stats.save(
+        update_fields=['minutes_week', 'minutes_month', 'average_week', 'total_minutes']
+    )
 
     return JsonResponse(
         {
             'minutes_day': minutes_today_val,
             'minutes_week': minutes_week_val,
             'minutes_month': minutes_month_val,
+            'average_minutes': average_week,
+            'total_minutes': total_minutes,
             'date': stats.date,
             'created': created,
         },

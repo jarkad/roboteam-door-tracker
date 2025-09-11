@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.aggregates import Max
 from django.db.models import OuterRef, Subquery
+from django.db.models.aggregates import Max
 from django.utils import timezone
 
 
@@ -43,9 +43,7 @@ class Membership(models.Model):
         on_delete=models.CASCADE,
         related_name='members',
     )
-    job = models.ForeignKey(
-        'Job', blank=True, null=True, on_delete=models.CASCADE
-    )
+    job = models.ForeignKey('Job', blank=True, null=True, on_delete=models.CASCADE)
     starting_from = models.DateTimeField(default=timezone.now)
 
     class MembershipManager(models.Manager):
@@ -118,3 +116,5 @@ class Statistics(models.Model):
     minutes_day = models.IntegerField()
     minutes_week = models.IntegerField()
     minutes_month = models.IntegerField()
+    average_week = models.IntegerField()
+    total_minutes = models.IntegerField()
