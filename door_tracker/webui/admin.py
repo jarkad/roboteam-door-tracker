@@ -1,14 +1,17 @@
 # admin.py
 import secrets
+from datetime import datetime, timedelta
 
 from django.contrib import admin
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
+from django.core.cache import cache
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import path, reverse
 
 from .models import Job, Log, Membership, Scanner, SubTeam, Tag
 
 admin.site.site_header = 'RoboTeam'
+TOKEN_LIFETIME = 24 * 360  # How long until the link expires
 
 
 class LogSubteamListFilter(admin.SimpleListFilter):
@@ -96,10 +99,10 @@ def get_app_list(self, request, app_label=None):
 
 def generate_register_link(request):
     token = secrets.token_urlsafe(16)
+    cache.set(f'register_token_{token}', True, timeout=TOKEN_LIFETIME)
     link = f'http://127.0.0.1:8000/ui/sign_up?token={token}'
-    return HttpResponse(
-        f"Your register link: <a href='{link}' target='_blank'>{link}</a>"
-    )
+    expires_at = (datetime.now() + timedelta(seconds=TOKEN_LIFETIME)).isoformat()
+    return JsonResponse({'link': link, 'expires_at': expires_at})
 
 
 # admin.py (at the bottom)
