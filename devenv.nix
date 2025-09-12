@@ -78,6 +78,7 @@ in
     pkgs.curl
     pkgs.git
     pkgs.httpie
+    pkgs.jujutsu
     pkgs.openssh
     pkgs.skopeo
   ];
