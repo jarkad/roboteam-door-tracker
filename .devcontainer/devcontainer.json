@@ -31,12 +31,13 @@
       "type": "volume"
     }
   ],
-  "onCreateCommand": "nix registry pin nixpkgs https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz && nix profile install nixpkgs#devenv nixpkgs#direnv",
+  "onCreateCommand": "nix registry pin nixpkgs https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz && nix profile install nixpkgs#devenv nixpkgs#direnv && devenv shell true",
   "overrideCommand": false,
   "portsAttributes": {
     "8000": {
       "label": "django"
     }
   },
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "waitFor": "onCreateCommand"
 }
