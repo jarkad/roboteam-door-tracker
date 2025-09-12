@@ -81,6 +81,7 @@ in
     pkgs.jujutsu
     pkgs.openssh
     pkgs.skopeo
+    pkgs.xh
   ];
 
   ## Tests
