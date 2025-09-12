@@ -100,7 +100,7 @@ def get_app_list(self, request, app_label=None):
 def generate_register_link(request):
     token = secrets.token_urlsafe(16)
     cache.set(f'register_token_{token}', True, timeout=TOKEN_LIFETIME)
-    link = f'http://127.0.0.1:8000/ui/sign_up?token={token}'
+    link = request.build_absolute_uri(reverse('sign_up', query={'token': token}))
     expires_at = (datetime.now() + timedelta(seconds=TOKEN_LIFETIME)).isoformat()
     return JsonResponse({'link': link, 'expires_at': expires_at})
 
